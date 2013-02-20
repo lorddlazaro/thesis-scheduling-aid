@@ -63,6 +63,47 @@ namespace introse
                 switch_section.Text = "Switch Sort (Sections)";
                 sort_section.Visible = false;
                 sort_panelists.Visible = true;
+
+                // TESTING DB CLASS
+
+                DBce db = new DBce();
+                
+                
+                // OUTPUTS NUMBER OF ROWS TABLE THESISGROUP HAS
+                
+                System.Console.WriteLine(db.Count("Select count(*) from thesisgroup"));
+                
+
+                // OUTPUTS TITLES, COURSES AND SECTIONS FROM THESISGROUP
+                
+                List<String>[] list = db.Select("Select title, course, section from thesisgroup",3);
+                for (int i = 0; i < 3; i++){
+                    foreach (String field in list[i])
+                        Console.Write(field + " ");
+                    Console.WriteLine();
+                }
+
+
+                // WRITES THESISGROUPID AND SECTION INTO SORT_PANELIST CHECKEDBOX LIST
+                
+                list = db.Select("Select thesisgroupid,title, section from thesisgroup", 3);
+                sort_panelists.BeginUpdate();
+                sort_panelists.Items.Clear();
+                ListBox.ObjectCollection items = sort_panelists.Items;
+
+
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    items.Add("");
+                    for (int j = 0; j < 3; j++)
+                        items[i] += list[j].ElementAt(i) + " ";
+
+                }
+                
+                sort_panelists.EndUpdate();
+
+                
+                // END OF TESTING
             }
             else
             {
