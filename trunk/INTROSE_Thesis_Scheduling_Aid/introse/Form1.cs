@@ -112,5 +112,6 @@ namespace introse
                 sort_section.Visible = true;
             }
         }
+
     }
 }
