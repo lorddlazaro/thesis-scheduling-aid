@@ -31,12 +31,19 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.table_interval = new System.Windows.Forms.Label();
+            this.interval_down = new System.Windows.Forms.PictureBox();
+            this.interval_up = new System.Windows.Forms.PictureBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.defenseweek_start = new System.Windows.Forms.DateTimePicker();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.day6 = new System.Windows.Forms.Label();
+            this.day5 = new System.Windows.Forms.Label();
+            this.day4 = new System.Windows.Forms.Label();
+            this.day3 = new System.Windows.Forms.Label();
+            this.day2 = new System.Windows.Forms.Label();
+            this.day1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label8 = new System.Windows.Forms.Label();
             this.sort_panelists = new System.Windows.Forms.CheckedListBox();
@@ -46,16 +53,16 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.interval_down)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.interval_up)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.tabControl1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPage1
@@ -77,14 +84,19 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.table_interval);
+            this.splitContainer1.Panel1.Controls.Add(this.interval_down);
+            this.splitContainer1.Panel1.Controls.Add(this.interval_up);
+            this.splitContainer1.Panel1.Controls.Add(this.label9);
+            this.splitContainer1.Panel1.Controls.Add(this.defenseweek_start);
             this.splitContainer1.Panel1.Controls.Add(this.pictureBox2);
             this.splitContainer1.Panel1.Controls.Add(this.pictureBox1);
-            this.splitContainer1.Panel1.Controls.Add(this.label7);
-            this.splitContainer1.Panel1.Controls.Add(this.label6);
-            this.splitContainer1.Panel1.Controls.Add(this.label5);
-            this.splitContainer1.Panel1.Controls.Add(this.label4);
-            this.splitContainer1.Panel1.Controls.Add(this.label3);
-            this.splitContainer1.Panel1.Controls.Add(this.label2);
+            this.splitContainer1.Panel1.Controls.Add(this.day6);
+            this.splitContainer1.Panel1.Controls.Add(this.day5);
+            this.splitContainer1.Panel1.Controls.Add(this.day4);
+            this.splitContainer1.Panel1.Controls.Add(this.day3);
+            this.splitContainer1.Panel1.Controls.Add(this.day2);
+            this.splitContainer1.Panel1.Controls.Add(this.day1);
             this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel1);
             this.splitContainer1.Panel1.Controls.Add(this.label8);
             // 
@@ -99,62 +111,130 @@
             this.splitContainer1.SplitterDistance = 600;
             this.splitContainer1.TabIndex = 0;
             // 
-            // label7
+            // table_interval
             // 
-            this.label7.Location = new System.Drawing.Point(514, 44);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(86, 35);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "Saturday";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.table_interval.Location = new System.Drawing.Point(86, 494);
+            this.table_interval.Name = "table_interval";
+            this.table_interval.Size = new System.Drawing.Size(119, 37);
+            this.table_interval.TabIndex = 15;
+            this.table_interval.Text = "Table Interval Length: 1hr";
+            this.table_interval.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label6
+            // interval_down
             // 
-            this.label6.Location = new System.Drawing.Point(427, 44);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(86, 35);
-            this.label6.TabIndex = 7;
-            this.label6.Text = "Friday";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.interval_down.Image = global::introse.Properties.Resources.downarrow;
+            this.interval_down.InitialImage = ((System.Drawing.Image)(resources.GetObject("interval_down.InitialImage")));
+            this.interval_down.Location = new System.Drawing.Point(39, 491);
+            this.interval_down.Name = "interval_down";
+            this.interval_down.Size = new System.Drawing.Size(43, 38);
+            this.interval_down.TabIndex = 14;
+            this.interval_down.TabStop = false;
+            this.interval_down.Click += new System.EventHandler(this.interval_down_Click);
             // 
-            // label5
+            // interval_up
             // 
-            this.label5.Location = new System.Drawing.Point(342, 44);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(86, 35);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "Thursday";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.interval_up.Image = global::introse.Properties.Resources.uparrow;
+            this.interval_up.InitialImage = ((System.Drawing.Image)(resources.GetObject("interval_up.InitialImage")));
+            this.interval_up.Location = new System.Drawing.Point(-3, 491);
+            this.interval_up.Name = "interval_up";
+            this.interval_up.Size = new System.Drawing.Size(43, 38);
+            this.interval_up.TabIndex = 13;
+            this.interval_up.TabStop = false;
+            this.interval_up.Click += new System.EventHandler(this.interval_up_Click);
             // 
-            // label4
+            // label9
             // 
-            this.label4.Location = new System.Drawing.Point(258, 44);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(86, 35);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "Wednesday";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label9.Location = new System.Drawing.Point(403, 491);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(200, 20);
+            this.label9.TabIndex = 12;
+            this.label9.Text = "Thesis Defense Date";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label3
+            // defenseweek_start
             // 
-            this.label3.Location = new System.Drawing.Point(172, 44);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(86, 35);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Tuesday";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.defenseweek_start.Location = new System.Drawing.Point(401, 508);
+            this.defenseweek_start.Name = "defenseweek_start";
+            this.defenseweek_start.Size = new System.Drawing.Size(200, 20);
+            this.defenseweek_start.TabIndex = 11;
+            this.defenseweek_start.ValueChanged += new System.EventHandler(this.defenseweek_start_ValueChanged);
             // 
-            // label2
+            // pictureBox2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.pictureBox2.Image = global::introse.Properties.Resources.downarrow;
+            this.pictureBox2.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox2.InitialImage")));
+            this.pictureBox2.Location = new System.Drawing.Point(42, 44);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(43, 38);
+            this.pictureBox2.TabIndex = 10;
+            this.pictureBox2.TabStop = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::introse.Properties.Resources.uparrow;
+            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
+            this.pictureBox1.Location = new System.Drawing.Point(0, 44);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(43, 38);
+            this.pictureBox1.TabIndex = 9;
+            this.pictureBox1.TabStop = false;
+            // 
+            // day6
+            // 
+            this.day6.Location = new System.Drawing.Point(514, 44);
+            this.day6.Name = "day6";
+            this.day6.Size = new System.Drawing.Size(86, 35);
+            this.day6.TabIndex = 8;
+            this.day6.Text = "Saturday";
+            this.day6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // day5
+            // 
+            this.day5.Location = new System.Drawing.Point(427, 44);
+            this.day5.Name = "day5";
+            this.day5.Size = new System.Drawing.Size(86, 35);
+            this.day5.TabIndex = 7;
+            this.day5.Text = "Friday";
+            this.day5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // day4
+            // 
+            this.day4.Location = new System.Drawing.Point(342, 44);
+            this.day4.Name = "day4";
+            this.day4.Size = new System.Drawing.Size(86, 35);
+            this.day4.TabIndex = 6;
+            this.day4.Text = "Thursday";
+            this.day4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // day3
+            // 
+            this.day3.Location = new System.Drawing.Point(258, 44);
+            this.day3.Name = "day3";
+            this.day3.Size = new System.Drawing.Size(86, 35);
+            this.day3.TabIndex = 5;
+            this.day3.Text = "Wednesday";
+            this.day3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // day2
+            // 
+            this.day2.Location = new System.Drawing.Point(172, 44);
+            this.day2.Name = "day2";
+            this.day2.Size = new System.Drawing.Size(86, 35);
+            this.day2.TabIndex = 4;
+            this.day2.Text = "Tuesday";
+            this.day2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // day1
+            // 
+            this.day1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.Location = new System.Drawing.Point(86, 44);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(86, 35);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Monday";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.day1.Location = new System.Drawing.Point(86, 44);
+            this.day1.Name = "day1";
+            this.day1.Size = new System.Drawing.Size(86, 35);
+            this.day1.TabIndex = 3;
+            this.day1.Text = "Monday";
+            this.day1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel1
             // 
@@ -183,7 +263,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.692307F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.692307F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.692307F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(601, 450);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(601, 410);
             this.tableLayoutPanel1.TabIndex = 2;
             // 
             // label8
@@ -278,26 +358,6 @@
             this.tabPage3.Text = "Thesis Groups";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(0, 44);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(43, 38);
-            this.pictureBox1.TabIndex = 9;
-            this.pictureBox1.TabStop = false;
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox2.InitialImage")));
-            this.pictureBox2.Location = new System.Drawing.Point(42, 44);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(43, 38);
-            this.pictureBox2.TabIndex = 10;
-            this.pictureBox2.TabStop = false;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -311,9 +371,11 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.interval_down)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.interval_up)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -330,15 +392,20 @@
         private System.Windows.Forms.Button switch_section;
         public System.Windows.Forms.CheckedListBox sort_section;
         public System.Windows.Forms.CheckedListBox sort_panelists;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label day6;
+        private System.Windows.Forms.Label day5;
+        private System.Windows.Forms.Label day4;
+        private System.Windows.Forms.Label day3;
+        private System.Windows.Forms.Label day2;
+        private System.Windows.Forms.Label day1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.DateTimePicker defenseweek_start;
+        private System.Windows.Forms.Label table_interval;
+        private System.Windows.Forms.PictureBox interval_down;
+        private System.Windows.Forms.PictureBox interval_up;
 
 
     }

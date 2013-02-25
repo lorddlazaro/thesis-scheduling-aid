@@ -14,8 +14,27 @@ namespace introse
         public Form1()
         {
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            init();
             InitializeComponent();
             tableLayoutPanel1.CellPaint += tableLayoutPanel1_CellPaint;
+        }
+
+        private void init()
+        {
+            intervals = new List<String>();
+            intervals.Add("1min");
+            intervals.Add("5min");
+            intervals.Add("10min");
+            intervals.Add("30min");
+            intervals.Add("1hr");
+
+            days = new List<String>();
+            days.Add("Monday");
+            days.Add("Tuesday");
+            days.Add("Wednesday");
+            days.Add("Thursday");
+            days.Add("Friday");
+            days.Add("Saturday");
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
@@ -65,7 +84,7 @@ namespace introse
                 sort_panelists.Visible = true;
 
                 // TESTING DB CLASS
-
+                /*
                 DBce db = new DBce();
                 
                 
@@ -101,8 +120,7 @@ namespace introse
                 }
                 
                 sort_panelists.EndUpdate();
-
-                
+                */
                 // END OF TESTING
             }
             else
@@ -113,5 +131,42 @@ namespace introse
             }
         }
 
+        private void interval_up_Click(object sender, EventArgs e)
+        {
+            String curr = this.table_interval.Text.Substring(23);
+            String put = "Table Interval Length: ";
+
+            if (intervals.IndexOf(curr) == 4)
+                return;
+            put += intervals.ElementAt(intervals.IndexOf(curr) + 1);
+
+            this.table_interval.Text = put;
+        }
+
+        private void interval_down_Click(object sender, EventArgs e)
+        {
+            String curr = this.table_interval.Text.Substring(23);
+            String put = "Table Interval Length: ";
+
+            if (intervals.IndexOf(curr) == 0)
+                return;
+            put += intervals.ElementAt(intervals.IndexOf(curr) - 1);
+
+            this.table_interval.Text = put;
+        }
+
+        private void defenseweek_start_ValueChanged(object sender, EventArgs e)
+        {
+            day1.Text = defenseweek_start.Value.DayOfWeek.ToString();
+            day2.Text = days.ElementAt((days.IndexOf(day1.Text) + 1) % 6);
+            day3.Text = days.ElementAt((days.IndexOf(day2.Text) + 1) % 6);
+            day4.Text = days.ElementAt((days.IndexOf(day3.Text) + 1) % 6);
+            day5.Text = days.ElementAt((days.IndexOf(day4.Text) + 1) % 6);
+            day6.Text = days.ElementAt((days.IndexOf(day5.Text) + 1) % 6);
+        }
+
+        private int topleft_hr;
+        private int topleft_min;
+        private List<String> intervals, days;
     }
 }
