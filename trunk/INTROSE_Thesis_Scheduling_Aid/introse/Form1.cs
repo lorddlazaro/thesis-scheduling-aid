@@ -14,15 +14,14 @@ namespace introse
         public Form1()
         {
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            init();
             InitializeComponent();
+            init();
             tableLayoutPanel1.CellPaint += tableLayoutPanel1_CellPaint;
         }
 
         private void init()
         {
             intervals = new List<String>();
-            intervals.Add("1min");
             intervals.Add("5min");
             intervals.Add("10min");
             intervals.Add("30min");
@@ -35,6 +34,24 @@ namespace introse
             days.Add("Thursday");
             days.Add("Friday");
             days.Add("Saturday");
+
+            time_table = new List<Label>();
+            time_table.Add(time_table1);
+            time_table.Add(time_table2);
+            time_table.Add(time_table3);
+            time_table.Add(time_table4);
+            time_table.Add(time_table5);
+            time_table.Add(time_table6);
+            time_table.Add(time_table7);
+            time_table.Add(time_table8);
+            time_table.Add(time_table9);
+            time_table.Add(time_table10);
+            time_table.Add(time_table11);
+            time_table.Add(time_table12);
+            time_table.Add(time_table13);
+
+            topleft = new TimeSpan(8, 0, 0);
+            time_table_update();
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
@@ -74,17 +91,16 @@ namespace introse
             e.Graphics.DrawRectangle(new Pen(Color.Black), e.CellBounds);
         }
 
-
-        private void button1_Click(object sender, EventArgs e)
+        private void switch_sort_Click(object sender, EventArgs e)
         {
-            if (switch_section.Text.Equals("Switch Sort (Panelists)"))
+            if (switch_sort.Text.Equals("Switch Sort (Panelists)"))
             {
-                switch_section.Text = "Switch Sort (Sections)";
+                switch_sort.Text = "Switch Sort (Sections)";
                 sort_section.Visible = false;
                 sort_panelists.Visible = true;
 
                 // TESTING DB CLASS
-                /*
+                
                 DBce db = new DBce();
                 
                 
@@ -120,12 +136,12 @@ namespace introse
                 }
                 
                 sort_panelists.EndUpdate();
-                */
+
                 // END OF TESTING
             }
             else
             {
-                switch_section.Text = "Switch Sort (Panelists)";
+                switch_sort.Text = "Switch Sort (Panelists)";
                 sort_panelists.Visible = false;
                 sort_section.Visible = true;
             }
@@ -136,11 +152,13 @@ namespace introse
             String curr = this.table_interval.Text.Substring(23);
             String put = "Table Interval Length: ";
 
-            if (intervals.IndexOf(curr) == 4)
+            if (intervals.IndexOf(curr) == 3)
                 return;
             put += intervals.ElementAt(intervals.IndexOf(curr) + 1);
 
             this.table_interval.Text = put;
+            topleft = new TimeSpan(8, 0, 0);
+            time_table_update();
         }
 
         private void interval_down_Click(object sender, EventArgs e)
@@ -153,11 +171,16 @@ namespace introse
             put += intervals.ElementAt(intervals.IndexOf(curr) - 1);
 
             this.table_interval.Text = put;
+            topleft = new TimeSpan(8, 0, 0);
+            time_table_update();
         }
 
         private void defenseweek_start_ValueChanged(object sender, EventArgs e)
         {
-            day1.Text = defenseweek_start.Value.DayOfWeek.ToString();
+            if (defenseweek_start.Value.DayOfWeek.ToString() == "Sunday")
+                day1.Text = "Monday";
+            else
+                day1.Text = defenseweek_start.Value.DayOfWeek.ToString();
             day2.Text = days.ElementAt((days.IndexOf(day1.Text) + 1) % 6);
             day3.Text = days.ElementAt((days.IndexOf(day2.Text) + 1) % 6);
             day4.Text = days.ElementAt((days.IndexOf(day3.Text) + 1) % 6);
@@ -165,8 +188,64 @@ namespace introse
             day6.Text = days.ElementAt((days.IndexOf(day5.Text) + 1) % 6);
         }
 
-        private int topleft_hr;
-        private int topleft_min;
+        private void time_scroll_up_Click(object sender, EventArgs e)
+        {
+            TimeSpan interval = getInterval();
+            topleft -= interval;
+            if (topleft < new TimeSpan(8, 0, 0))
+                topleft = new TimeSpan(8, 0, 0);
+
+            time_table_update();
+        }
+
+        private void time_scroll_down_Click(object sender, EventArgs e)
+        {
+            TimeSpan interval = getInterval();
+            TimeSpan max = new TimeSpan(topleft.Hours, topleft.Minutes, 0);
+            topleft += interval;
+
+            for (int i = 0; i < 13; i++)
+                max += interval;
+
+            if (max >= new TimeSpan(21, 0, 0))
+                topleft -= interval;
+
+            time_table_update();
+        }
+
+        private TimeSpan getInterval()
+        {
+            String a = this.table_interval.Text.Substring(23);
+
+            switch (intervals.IndexOf(a))
+            {
+                case 0:
+                    return new TimeSpan(0, 5, 0);
+                case 1:
+                    return new TimeSpan(0, 10, 0);
+                case 2:
+                    return new TimeSpan(0, 30, 0);
+                case 3:
+                    return new TimeSpan(1, 0, 0);
+                default:
+                    return new TimeSpan(0, 0, 0);
+            }
+        }
+
+        private void time_table_update()
+        {
+            TimeSpan interval = getInterval();
+            TimeSpan curr = new TimeSpan(0, 0, 0);
+
+            foreach (Label i in time_table) 
+            {
+                i.Text = (topleft + curr) + "";
+                curr += interval;
+            }
+        }
+
+        private TimeSpan topleft;
         private List<String> intervals, days;
+        private List<Label> time_table;
     }
 }
