@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace introse
 {
@@ -19,7 +20,7 @@ namespace introse
             tableLayoutPanel1.CellPaint += tableLayoutPanel1_CellPaint;
         }
 
-        private void init()
+        private void init() 
         {
             intervals = new List<String>();
             intervals.Add("5min");
@@ -52,6 +53,8 @@ namespace introse
 
             topleft = new TimeSpan(8, 0, 0);
             time_table_update();
+
+            scroll = true;
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
@@ -188,7 +191,7 @@ namespace introse
             day6.Text = days.ElementAt((days.IndexOf(day5.Text) + 1) % 6);
         }
 
-        private void time_scroll_up_Click(object sender, EventArgs e)
+        private void scroll_up()
         {
             TimeSpan interval = getInterval();
             topleft -= interval;
@@ -198,7 +201,7 @@ namespace introse
             time_table_update();
         }
 
-        private void time_scroll_down_Click(object sender, EventArgs e)
+        private void scroll_down()
         {
             TimeSpan interval = getInterval();
             TimeSpan max = new TimeSpan(topleft.Hours, topleft.Minutes, 0);
@@ -211,6 +214,30 @@ namespace introse
                 topleft -= interval;
 
             time_table_update();
+        }
+        
+        private void time_scroll_up_MouseDown(object sender, EventArgs e)
+        {
+            timer1.Enabled = true;
+            timer1.Start();
+            scroll = true;
+        }
+
+        private void time_scroll_up_MouseUp(object sender, EventArgs e)
+        {
+            timer1.Stop();
+        }
+
+        private void time_scroll_down_MouseDown(object sender, EventArgs e)
+        {
+            timer1.Enabled = true;
+            timer1.Start();
+            scroll = false;
+        }
+
+        private void time_scroll_down_MouseUp(object sender, EventArgs e)
+        {
+            timer1.Stop();
         }
 
         private TimeSpan getInterval()
@@ -247,5 +274,14 @@ namespace introse
         private TimeSpan topleft;
         private List<String> intervals, days;
         private List<Label> time_table;
+        private bool scroll;
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (scroll)
+                scroll_up();
+            else
+                scroll_down();
+        }
     }
 }

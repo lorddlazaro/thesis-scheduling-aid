@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -66,6 +67,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -182,7 +184,8 @@
             this.time_scroll_down.Size = new System.Drawing.Size(43, 38);
             this.time_scroll_down.TabIndex = 10;
             this.time_scroll_down.TabStop = false;
-            this.time_scroll_down.Click += new System.EventHandler(this.time_scroll_down_Click);
+            this.time_scroll_down.MouseDown += new System.Windows.Forms.MouseEventHandler(this.time_scroll_down_MouseDown);
+            this.time_scroll_down.MouseUp += new System.Windows.Forms.MouseEventHandler(this.time_scroll_down_MouseUp);
             // 
             // time_scroll_up
             // 
@@ -193,7 +196,8 @@
             this.time_scroll_up.Size = new System.Drawing.Size(43, 38);
             this.time_scroll_up.TabIndex = 9;
             this.time_scroll_up.TabStop = false;
-            this.time_scroll_up.Click += new System.EventHandler(this.time_scroll_up_Click);
+            this.time_scroll_up.MouseDown += new System.Windows.Forms.MouseEventHandler(this.time_scroll_up_MouseDown);
+            this.time_scroll_up.MouseUp += new System.Windows.Forms.MouseEventHandler(this.time_scroll_up_MouseUp);
             // 
             // day6
             // 
@@ -504,6 +508,10 @@
             this.tabPage3.Text = "Thesis Groups";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -566,6 +574,7 @@
         private System.Windows.Forms.Label time_table11;
         private System.Windows.Forms.Label time_table12;
         private System.Windows.Forms.Label time_table13;
+        private System.Windows.Forms.Timer timer1;
 
 
     }
