@@ -205,7 +205,7 @@
             this.day6.Name = "day6";
             this.day6.Size = new System.Drawing.Size(86, 35);
             this.day6.TabIndex = 8;
-            this.day6.Text = "Saturday";
+            this.day6.Text = "Saturday\r\nmm/dd/yyyy";
             this.day6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // day5
@@ -214,7 +214,7 @@
             this.day5.Name = "day5";
             this.day5.Size = new System.Drawing.Size(86, 35);
             this.day5.TabIndex = 7;
-            this.day5.Text = "Friday";
+            this.day5.Text = "Friday\r\nmm/dd/yyyy";
             this.day5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // day4
@@ -223,7 +223,7 @@
             this.day4.Name = "day4";
             this.day4.Size = new System.Drawing.Size(86, 35);
             this.day4.TabIndex = 6;
-            this.day4.Text = "Thursday";
+            this.day4.Text = "Thursday\r\nmm/dd/yyyy";
             this.day4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // day3
@@ -232,7 +232,7 @@
             this.day3.Name = "day3";
             this.day3.Size = new System.Drawing.Size(86, 35);
             this.day3.TabIndex = 5;
-            this.day3.Text = "Wednesday";
+            this.day3.Text = "Wednesday\r\nmm/dd/yyyy";
             this.day3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // day2
@@ -241,7 +241,7 @@
             this.day2.Name = "day2";
             this.day2.Size = new System.Drawing.Size(86, 35);
             this.day2.TabIndex = 4;
-            this.day2.Text = "Tuesday";
+            this.day2.Text = "Tuesday\r\nmm/dd/yyyy";
             this.day2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // day1
@@ -253,7 +253,7 @@
             this.day1.Name = "day1";
             this.day1.Size = new System.Drawing.Size(86, 35);
             this.day1.TabIndex = 3;
-            this.day1.Text = "Monday";
+            this.day1.Text = "Monday\r\nmm/dd/yyyy";
             this.day1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel1
@@ -429,6 +429,7 @@
             // 
             // sort_panelists
             // 
+            this.sort_panelists.CheckOnClick = true;
             this.sort_panelists.FormattingEnabled = true;
             this.sort_panelists.Items.AddRange(new object[] {
             "Di mo alam dahil sa yo",
@@ -456,6 +457,7 @@
             // 
             // sort_section
             // 
+            this.sort_section.CheckOnClick = true;
             this.sort_section.FormattingEnabled = true;
             this.sort_section.Items.AddRange(new object[] {
             "Kahit san ka man ngayon",
