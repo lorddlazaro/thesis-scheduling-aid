@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace introse
 {
@@ -35,24 +36,69 @@ namespace introse
 
         private void InitData()
         {
-            initMultiGroupPanelists();
-            initPanelistGroupMap();
+            //initMultiGroupPanelists();
+            //initPanelistGroupMap();
 
             //initIsolatedGroups();
         }
 
         /* This method will be called by the GUI to add multigrouped panelists to the tree.
          * */
-        public void AddPanelistsToTree()
+        public void AddPanelistsToTree(TreeNodeCollection tree)
         {
-        
+            String query = "select panelistID from panelassignment group by panelistID having count(*) > 1;";
+            List<String>[] parentList = dbHandler.Select(query, 1);
+            List<String>[] parentInfo;
+            List<String>[] childList;
+            TreeNode parent;
+            TreeNode[] child;
+            TreeNodeCollection children;
+
+            for(int i = 0; i<parentList[0].Count(); i++){
+                query = "Select firstName, MI, lastName from panelist where panelistid = " +parentList[0].ElementAt(i)+ ";";
+                parentInfo = dbHandler.Select(query, 3);
+
+                query = "Select t.thesisgroupID,t.title from thesisgroup t, panelassignment p where t.thesisgroupid = p.thesisgroupid and p.panelistID =" +parentList[0].ElementAt(i)+ ";";
+                childList = dbHandler.Select(query, 2);
+                
+                parent = new TreeNode();
+                child = new TreeNode[childList[0].Count()];
+                children = parent.Nodes;
+
+                parent.Name = parentList[0].ElementAt(i);
+                parent.Text = parentInfo[0].ElementAt(0) + " " + parentInfo[1].ElementAt(0) + " " + parentInfo[2].ElementAt(0);
+
+                for (int j = 0; j < childList[0].Count(); j++)
+                {
+                    child[j] = new TreeNode();
+                    child[j].Name = childList[0].ElementAt(j);
+                    child[j].Text = childList[1].ElementAt(j);
+                    children.Add(child[j]);
+
+                }
+                tree.Add(parent);
+            }
         }
 
         public void AddGroupsToTree() 
         {
         
         }
-       
+
+
+        public void AddIsolatedGroupsToList(TreeNodeCollection tree) { 
+               String query = "select thesisgroupID,title from thesisgroup where thesisgroupID not in (select thesisgroupID from panelassignment where panelistID in (select panelistID from panelassignment group by panelistID having count(*) > 1));";
+               List<String>[] list = dbHandler.Select(query, 2);
+               TreeNode node;
+               for(int i=0;i<list[0].Count();i++){
+                   node = new TreeNode();
+
+                   node.Name = list[0].ElementAt(i);
+                   node.Text = list[1].ElementAt(i);
+
+                   tree.Add(node);
+               }
+        }
 
         /*The following two methods are the important ones for initializing the lists 
          * to be used for drawing the available times and defense schedules.
@@ -85,10 +131,10 @@ namespace introse
          * */
         public bool InsertScheduleIfValid(int groupIndex, DefenseSchedule defSched)
         {
-            if (isScheduleValid(groupIndex, defSched))
-            {
-                return true;
-            }
+            //if (isScheduleValid(groupIndex, defSched))
+            //{
+            //    return true;
+            //}
 
             return false;
         }

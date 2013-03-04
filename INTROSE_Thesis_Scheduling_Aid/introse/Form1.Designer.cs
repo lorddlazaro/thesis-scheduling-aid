@@ -60,9 +60,9 @@
             this.time_table12 = new System.Windows.Forms.Label();
             this.time_table13 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.sort_panelists = new System.Windows.Forms.CheckedListBox();
+            this.treeView2 = new System.Windows.Forms.TreeView();
+            this.treeView1 = new System.Windows.Forms.TreeView();
             this.switch_sort = new System.Windows.Forms.Button();
-            this.sort_section = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -119,9 +119,9 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.Color.LavenderBlush;
-            this.splitContainer1.Panel2.Controls.Add(this.sort_panelists);
+            this.splitContainer1.Panel2.Controls.Add(this.treeView2);
+            this.splitContainer1.Panel2.Controls.Add(this.treeView1);
             this.splitContainer1.Panel2.Controls.Add(this.switch_sort);
-            this.splitContainer1.Panel2.Controls.Add(this.sort_section);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Size = new System.Drawing.Size(767, 528);
             this.splitContainer1.SplitterDistance = 600;
@@ -246,9 +246,9 @@
             // 
             // day1
             // 
-            this.day1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.day1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.day1.Location = new System.Drawing.Point(86, 44);
             this.day1.Name = "day1";
             this.day1.Size = new System.Drawing.Size(86, 35);
@@ -427,23 +427,25 @@
             this.label8.Text = "HOY LORDD ANO TO";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // sort_panelists
+            // treeView2
             // 
-            this.sort_panelists.CheckOnClick = true;
-            this.sort_panelists.FormattingEnabled = true;
-            this.sort_panelists.Items.AddRange(new object[] {
-            "Di mo alam dahil sa yo",
-            "Ako\'y di makakain",
-            "Di rin makatulog",
-            "Buhat ng iyong lokohin",
-            "Kung ako\'y muling iibig",
-            "Sana\'y di maging katulad mo",
-            "Tulad mo na may pusong bato"});
-            this.sort_panelists.Location = new System.Drawing.Point(0, 44);
-            this.sort_panelists.Name = "sort_panelists";
-            this.sort_panelists.Size = new System.Drawing.Size(160, 454);
-            this.sort_panelists.TabIndex = 4;
-            this.sort_panelists.Visible = false;
+            this.treeView2.HotTracking = true;
+            this.treeView2.Location = new System.Drawing.Point(3, 267);
+            this.treeView2.Name = "treeView2";
+            this.treeView2.ShowPlusMinus = false;
+            this.treeView2.ShowRootLines = false;
+            this.treeView2.Size = new System.Drawing.Size(157, 226);
+            this.treeView2.TabIndex = 7;
+            this.treeView2.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView2_NodeMouseClick);
+            // 
+            // treeView1
+            // 
+            this.treeView1.HotTracking = true;
+            this.treeView1.Location = new System.Drawing.Point(3, 44);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(157, 217);
+            this.treeView1.TabIndex = 6;
+            this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             // 
             // switch_sort
             // 
@@ -451,23 +453,9 @@
             this.switch_sort.Name = "switch_sort";
             this.switch_sort.Size = new System.Drawing.Size(160, 29);
             this.switch_sort.TabIndex = 2;
-            this.switch_sort.Text = "Switch Sort (Panelists)";
+            this.switch_sort.Text = "View Isolated Groups";
             this.switch_sort.UseVisualStyleBackColor = true;
             this.switch_sort.Click += new System.EventHandler(this.switch_sort_Click);
-            // 
-            // sort_section
-            // 
-            this.sort_section.CheckOnClick = true;
-            this.sort_section.FormattingEnabled = true;
-            this.sort_section.Items.AddRange(new object[] {
-            "Kahit san ka man ngayon",
-            "Dinggin mo itong awitin",
-            "Baka sakaling ika\'y magising",
-            "Ang matigas mong damdamin"});
-            this.sort_section.Location = new System.Drawing.Point(0, 44);
-            this.sort_section.Name = "sort_section";
-            this.sort_section.Size = new System.Drawing.Size(160, 454);
-            this.sort_section.TabIndex = 1;
             // 
             // label1
             // 
@@ -547,8 +535,6 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Button switch_sort;
-        public System.Windows.Forms.CheckedListBox sort_section;
-        public System.Windows.Forms.CheckedListBox sort_panelists;
         private System.Windows.Forms.Label day6;
         private System.Windows.Forms.Label day5;
         private System.Windows.Forms.Label day4;
@@ -577,6 +563,8 @@
         private System.Windows.Forms.Label time_table12;
         private System.Windows.Forms.Label time_table13;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TreeView treeView2;
 
 
     }

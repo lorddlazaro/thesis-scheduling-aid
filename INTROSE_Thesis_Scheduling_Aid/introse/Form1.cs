@@ -12,6 +12,9 @@ namespace introse
 {
     public partial class Form1 : Form
     {
+        DBce db = new DBce();
+        SchedulingDataManager sdm = new SchedulingDataManager();
+
         public Form1()
         {
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -58,6 +61,15 @@ namespace introse
 
             skedlist = new List<DateTime>();
             skedlist.Add(new DateTime(2013, 3, 6, 8, 30, 0));
+
+            treeView1.BeginUpdate();
+            sdm.AddPanelistsToTree(treeView1.Nodes);
+            treeView1.EndUpdate();
+            treeView1.ExpandAll();
+            treeView2.BeginUpdate();
+            sdm.AddIsolatedGroupsToList(treeView2.Nodes);
+            treeView2.EndUpdate();
+
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
@@ -77,57 +89,21 @@ namespace introse
 
         private void switch_sort_Click(object sender, EventArgs e)
         {
-            if (switch_sort.Text.Equals("Switch Sort (Panelists)"))
+            if (switch_sort.Text.Equals("View Clustered Groups"))
             {
-                switch_sort.Text = "Switch Sort (Sections)";
-                sort_section.Visible = false;
-                sort_panelists.Visible = true;
-
-                // TESTING DB CLASS
-                
-                DBce db = new DBce();
-                
-                
-                // OUTPUTS NUMBER OF ROWS TABLE THESISGROUP HAS
-                
-                System.Console.WriteLine(db.Count("Select count(*) from thesisgroup"));
-                
-
-                // OUTPUTS TITLES, COURSES AND SECTIONS FROM THESISGROUP
-                
-                List<String>[] list = db.Select("Select title, course, section from thesisgroup",3);
-                for (int i = 0; i < 3; i++){
-                    foreach (String field in list[i])
-                        Console.Write(field + " ");
-                    Console.WriteLine();
-                }
-
-
-                // WRITES THESISGROUPID AND SECTION INTO SORT_PANELIST CHECKEDBOX LIST
-                
-                list = db.Select("Select thesisgroupid,title, section from thesisgroup", 3);
-                sort_panelists.BeginUpdate();
-                sort_panelists.Items.Clear();
-                ListBox.ObjectCollection items = sort_panelists.Items;
-
-
-                for (int i = 0; i < list.Count(); i++)
-                {
-                    items.Add("");
-                    for (int j = 0; j < 3; j++)
-                        items[i] += list[j].ElementAt(i) + " ";
-
-                }
-                
-                sort_panelists.EndUpdate();
-
-                // END OF TESTING
+                switch_sort.Text = "View Isolated Groups";
+                //treeView1.Visible = true;
+                //treeView2.Visible = false;
+                treeView2.Enabled = false;
+                treeView1.Enabled = true;
             }
             else
             {
-                switch_sort.Text = "Switch Sort (Panelists)";
-                sort_panelists.Visible = false;
-                sort_section.Visible = true;
+                switch_sort.Text = "View Clustered Groups";
+                //treeView1.Visible = false;
+                //treeView2.Visible = true;
+                treeView1.Enabled = false;
+                treeView2.Enabled = true;
             }
         }
 
@@ -265,6 +241,17 @@ namespace introse
                 scroll_up();
             else
                 scroll_down();
+        }
+
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            Console.WriteLine("ID: " + e.Node.Name);
+            Console.WriteLine(e.Node);
+        }
+        private void treeView2_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            Console.WriteLine("ID: " + e.Node.Name);
+            Console.WriteLine(e.Node);
         }
     }
 }
