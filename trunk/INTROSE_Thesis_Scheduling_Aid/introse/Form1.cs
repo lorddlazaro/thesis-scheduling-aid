@@ -28,13 +28,13 @@ namespace introse
             intervals.Add("30min");
             intervals.Add("1hr");
 
-            days = new List<String>();
-            days.Add("Monday");
-            days.Add("Tuesday");
-            days.Add("Wednesday");
-            days.Add("Thursday");
-            days.Add("Friday");
-            days.Add("Saturday");
+            days = new List<Label>();
+            days.Add(day1);
+            days.Add(day2);
+            days.Add(day3);
+            days.Add(day4);
+            days.Add(day5);
+            days.Add(day6);
 
             time_table = new List<Label>();
             time_table.Add(time_table1);
@@ -55,38 +55,19 @@ namespace introse
             time_table_update();
 
             scroll = true;
+
+            skedlist = new List<DateTime>();
+            skedlist.Add(new DateTime(2013, 3, 6, 8, 30, 0));
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
-            /* 
-             * check visible checkboxlist (sort_section/sort_panelists)
-             * call draw_rect for every checked element sa resultset
-             * redraw table every time checkboxlist changes, probably (still don't know how to)
-             * 
-             * 
-             * Queries for DB:
-             *  for sort_section (normal view):
-             *      SELECT * from Timeslot ORDER BY startTime;
-             *  for sort_panelists (clustered view):
-             *      for each panelist
-             *          SELECT * from Timeslot GROUP BY panelistID;
-             *      SELECT (everyone else na walang panelist, i can't introdb lol)
-             */
+
         }
 
         private void draw_Rect(object sender, int day, int time_hr, int time_min, Boolean section, TableLayoutCellPaintEventArgs e)
         {
-            /*
-             * int yval = e.CellBounds.Height / 14; // 14 hrs
-             * 
-             * // section = true, THSST-3 : section = false, THSST-1
-             * int height = section? 2 : 1;
-             * 
-             * if (row == day)
-             * e.Graphics.FillRectangle(Brushes.<someredcolor>, e.CellBounds.X, e.CellBounds.Y + yval * (time_hr + 1.0 * time_min / 60), e.CellBounds.Width, height*yval);
-             * 
-             */
+
         }
         
         void tableLayoutPanel1_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
@@ -180,15 +161,14 @@ namespace introse
 
         private void defenseweek_start_ValueChanged(object sender, EventArgs e)
         {
-            if (defenseweek_start.Value.DayOfWeek.ToString() == "Sunday")
-                day1.Text = "Monday";
-            else
-                day1.Text = defenseweek_start.Value.DayOfWeek.ToString();
-            day2.Text = days.ElementAt((days.IndexOf(day1.Text) + 1) % 6);
-            day3.Text = days.ElementAt((days.IndexOf(day2.Text) + 1) % 6);
-            day4.Text = days.ElementAt((days.IndexOf(day3.Text) + 1) % 6);
-            day5.Text = days.ElementAt((days.IndexOf(day4.Text) + 1) % 6);
-            day6.Text = days.ElementAt((days.IndexOf(day5.Text) + 1) % 6);
+            DateTime curr = new DateTime(defenseweek_start.Value.Year, defenseweek_start.Value.Month, defenseweek_start.Value.Day);
+
+            for (int i = 0; i < 6; i++, curr = curr.AddDays(1))
+            {
+                if (curr.DayOfWeek.ToString() == "Sunday")
+                    curr = curr.AddDays(1);
+                days.ElementAt(i).Text = curr.DayOfWeek.ToString() + "\n" + curr.ToString().Split(' ')[0];
+            }
         }
 
         private void scroll_up()
@@ -218,6 +198,7 @@ namespace introse
         
         private void time_scroll_up_MouseDown(object sender, EventArgs e)
         {
+            scroll_up();
             timer1.Enabled = true;
             timer1.Start();
             scroll = true;
@@ -230,6 +211,7 @@ namespace introse
 
         private void time_scroll_down_MouseDown(object sender, EventArgs e)
         {
+            scroll_down();
             timer1.Enabled = true;
             timer1.Start();
             scroll = false;
@@ -272,9 +254,10 @@ namespace introse
         }
 
         private TimeSpan topleft;
-        private List<String> intervals, days;
-        private List<Label> time_table;
+        private List<String> intervals;
+        private List<Label> time_table, days;
         private bool scroll;
+        private List<DateTime> skedlist;
 
         private void timer1_Tick(object sender, EventArgs e)
         {
