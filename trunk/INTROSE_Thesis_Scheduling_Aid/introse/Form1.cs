@@ -13,7 +13,7 @@ namespace introse
     public partial class Form1 : Form
     {
         DBce db = new DBce();
-        SchedulingDataManager sdm = new SchedulingDataManager();
+        //SchedulingDataManager sdm = new SchedulingDataManager();
 
         public Form1()
         {
@@ -28,8 +28,8 @@ namespace introse
             intervals = new List<String>();
             intervals.Add("5min");
             intervals.Add("10min");
+            intervals.Add("15min");
             intervals.Add("30min");
-            intervals.Add("1hr");
 
             days = new List<Label>();
             days.Add(day1);
@@ -39,28 +39,35 @@ namespace introse
             days.Add(day5);
             days.Add(day6);
 
+            defenseweek_start.Value = DateTime.Today;
+
             time_table = new List<Label>();
-            time_table.Add(time_table1);
-            time_table.Add(time_table2);
-            time_table.Add(time_table3);
-            time_table.Add(time_table4);
-            time_table.Add(time_table5);
-            time_table.Add(time_table6);
-            time_table.Add(time_table7);
-            time_table.Add(time_table8);
-            time_table.Add(time_table9);
-            time_table.Add(time_table10);
-            time_table.Add(time_table11);
-            time_table.Add(time_table12);
-            time_table.Add(time_table13);
+            time_table.Add(time_table1);       time_table.Add(time_table2);
+            time_table.Add(time_table3);       time_table.Add(time_table4);
+            time_table.Add(time_table5);       time_table.Add(time_table6);
+            time_table.Add(time_table7);       time_table.Add(time_table8);
+            time_table.Add(time_table9);       time_table.Add(time_table10);
+            time_table.Add(time_table11);      time_table.Add(time_table12);
+            time_table.Add(time_table13);      time_table.Add(time_table14);
+            time_table.Add(time_table15);      time_table.Add(time_table16);
+            time_table.Add(time_table17);      time_table.Add(time_table18);
+            time_table.Add(time_table19);      time_table.Add(time_table20);
+            time_table.Add(time_table21);      time_table.Add(time_table22);
+            time_table.Add(time_table23);      time_table.Add(time_table24);
+            time_table.Add(time_table25);      time_table.Add(time_table26);
 
             topleft = new TimeSpan(8, 0, 0);
             time_table_update();
 
             scroll = true;
 
-            skedlist = new List<DateTime>();
-            skedlist.Add(new DateTime(2013, 3, 6, 8, 30, 0));
+            defstart = new List<DateTime>();
+            defstart.Add(new DateTime(2013, 3, 6, 8, 30, 0));
+            defstart.Add(new DateTime(2013, 3, 8, 8, 0, 0));
+
+            defend = new List<DateTime>();
+            defend.Add(new DateTime(2013, 3, 6, 9, 30, 0));
+            defend.Add(new DateTime(2013, 3, 8, 10, 0, 0));
 
             treeView1.BeginUpdate();
             sdm.AddPanelistsToTree(treeView1.Nodes);
@@ -74,17 +81,32 @@ namespace introse
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
-
+            
         }
 
-        private void draw_Rect(object sender, int day, int time_hr, int time_min, Boolean section, TableLayoutCellPaintEventArgs e)
-        {
-
-        }
-        
         void tableLayoutPanel1_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
         {
             e.Graphics.DrawRectangle(new Pen(Color.Black), e.CellBounds);
+
+            if (e.Column != 0)
+            {
+                int curr_day = Convert.ToInt32(days.ElementAt(e.Column - 1).Text.Split('\n')[1].Split('/')[1]);
+                int curr_mo = Convert.ToInt32(days.ElementAt(e.Column - 1).Text.Split('\n')[1].Split('/')[0]);
+                int curr_yr = Convert.ToInt32(days.ElementAt(e.Column - 1).Text.Split('\n')[1].Split('/')[2]);
+
+                int curr_hr = Convert.ToInt32(time_table.ElementAt(e.Row).Text.Split(':')[0]);
+                int curr_min = Convert.ToInt32(time_table.ElementAt(e.Row).Text.Split(':')[1]);
+
+                DateTime curr = new DateTime(curr_yr, curr_mo, curr_day, curr_hr, curr_min, 0);
+
+                for (int i = 0; i < defstart.Count; i++)
+                {
+                    if (curr.CompareTo(defstart.ElementAt(i)) >= 0 && curr.CompareTo(defend.ElementAt(i)) <= 0)
+                    {
+                        e.Graphics.FillRectangle(Brushes.LightBlue, e.CellBounds.X+1, e.CellBounds.Y+1, e.CellBounds.Width-1, e.CellBounds.Height-1);
+                    }
+                }
+            }
         }
 
         private void switch_sort_Click(object sender, EventArgs e)
@@ -145,6 +167,8 @@ namespace introse
                     curr = curr.AddDays(1);
                 days.ElementAt(i).Text = curr.DayOfWeek.ToString() + "\n" + curr.ToString().Split(' ')[0];
             }
+
+            tableLayoutPanel1.Refresh();
         }
 
         private void scroll_up()
@@ -163,7 +187,7 @@ namespace introse
             TimeSpan max = new TimeSpan(topleft.Hours, topleft.Minutes, 0);
             topleft += interval;
 
-            for (int i = 0; i < 13; i++)
+            for (int i = 0; i < time_table.Count; i++)
                 max += interval;
 
             if (max >= new TimeSpan(21, 0, 0))
@@ -209,9 +233,9 @@ namespace introse
                 case 1:
                     return new TimeSpan(0, 10, 0);
                 case 2:
-                    return new TimeSpan(0, 30, 0);
+                    return new TimeSpan(0, 15, 0);
                 case 3:
-                    return new TimeSpan(1, 0, 0);
+                    return new TimeSpan(0, 30, 0);
                 default:
                     return new TimeSpan(0, 0, 0);
             }
@@ -233,7 +257,7 @@ namespace introse
         private List<String> intervals;
         private List<Label> time_table, days;
         private bool scroll;
-        private List<DateTime> skedlist;
+        private List<DateTime> defstart, defend;
 
         private void timer1_Tick(object sender, EventArgs e)
         {
