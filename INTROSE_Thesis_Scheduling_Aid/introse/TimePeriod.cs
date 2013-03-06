@@ -7,13 +7,14 @@ namespace introse
 {
     public class TimePeriod
     {
-        DateTime date;
-        DateTime startTime;
-        DateTime endTime;
+        private DateTime startTime;
+        private DateTime endTime;
 
-        public TimePeriod(DateTime date, DateTime startTime, DateTime endTime) 
+        public DateTime StartTime { get { return startTime; } }
+        public DateTime EndTime { get { return endTime; } }
+
+        public TimePeriod(DateTime startTime, DateTime endTime) 
         {
-            this.date = date;
             this.startTime = startTime;
             this.endTime = endTime;
         }
