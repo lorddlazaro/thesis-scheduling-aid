@@ -13,7 +13,7 @@ namespace introse
     public partial class Form1 : Form
     {
         DBce db = new DBce();
-        //SchedulingDataManager sdm = new SchedulingDataManager();
+        SchedulingDataManager sdm = new SchedulingDataManager();
 
         public Form1()
         {
@@ -251,6 +251,8 @@ namespace introse
                 i.Text = (topleft + curr) + "";
                 curr += interval;
             }
+
+            tableLayoutPanel1.Refresh();
         }
 
         private TimeSpan topleft;
@@ -269,8 +271,14 @@ namespace introse
 
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            Console.WriteLine("ID: " + e.Node.Name);
-            Console.WriteLine(e.Node);
+            //Console.WriteLine("ID: " + e.Node.Name);
+            //Console.WriteLine(e.Node);
+
+            DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
+            DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
+
+            sdm.RefreshClusterDefSchedules(start,end,e.Node.Name);
+
         }
         private void treeView2_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
