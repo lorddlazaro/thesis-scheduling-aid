@@ -14,6 +14,7 @@ namespace introse
     {
         DBce db = new DBce();
         SchedulingDataManager sdm = new SchedulingDataManager();
+        String currPanelistID; //To keep track of which cluster is currently selected.
 
         public Form1()
         {
@@ -25,6 +26,7 @@ namespace introse
 
         private void init() 
         {
+            currPanelistID = "";
             intervals = new List<String>();
             intervals.Add("5min");
             intervals.Add("10min");
@@ -68,7 +70,6 @@ namespace introse
             treeView2.BeginUpdate();
             sdm.AddIsolatedGroupsToList(treeView2.Nodes);
             treeView2.EndUpdate();
-
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
@@ -78,7 +79,7 @@ namespace introse
 
         void tableLayoutPanel1_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
         {
-            //e.Graphics.DrawRectangle(new Pen(Color.Black), e.CellBounds);
+            e.Graphics.DrawRectangle(new Pen(Color.Black), e.CellBounds);
 
             if (e.Column != 0)
             {
@@ -93,10 +94,9 @@ namespace introse
 
                 for (int i = 0; i < sdm.ClusterDefScheds.Count; i++)
                 {
-                    if (sdm.ClusterDefScheds.ElementAt(i).StartTime.CompareTo(curr) >= 0 && sdm.ClusterDefScheds.ElementAt(i).EndTime.CompareTo(curr) <= 0)
+                    if (sdm.ClusterDefScheds.ElementAt(i).StartTime.CompareTo(curr) <= 0 && sdm.ClusterDefScheds.ElementAt(i).EndTime.CompareTo(curr) >= 0)
                     {
-                        //e.Graphics.FillRectangle(Brushes.LightBlue, e.CellBounds.X+1, e.CellBounds.Y+1, e.CellBounds.Width-1, e.CellBounds.Height-1);
-                        e.Graphics.FillRectangle(Brushes.LightBlue, e.CellBounds);
+                        e.Graphics.FillRectangle(Brushes.LightBlue, e.CellBounds.X+1, e.CellBounds.Y+1, e.CellBounds.Width-1, e.CellBounds.Height-1);
                     }
                 }
             }
@@ -161,6 +161,13 @@ namespace introse
                 days.ElementAt(i).Text = curr.DayOfWeek.ToString() + "\n" + curr.ToString().Split(' ')[0];
             }
 
+            if (!currPanelistID.Equals("")) 
+            {
+                DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
+                DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
+                sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
+            }
+          
             tableLayoutPanel1.Refresh();
         }
 
@@ -268,19 +275,17 @@ namespace introse
 
             DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
             DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
+            currPanelistID = e.Node.Name;
 
-            sdm.RefreshClusterDefSchedules(start,end,e.Node.Name);
-
+            sdm.RefreshClusterDefSchedules(start,end,currPanelistID);
+            if(sdm.ClusterDefScheds.Count > 0)
+                tableLayoutPanel1.Refresh();
         }
+        
         private void treeView2_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             Console.WriteLine("ID: " + e.Node.Name);
             Console.WriteLine(e.Node);
-        }
-
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

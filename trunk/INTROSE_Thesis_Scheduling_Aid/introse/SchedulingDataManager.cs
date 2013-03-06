@@ -31,15 +31,8 @@ namespace introse
             clusterDefScheds = new List<DefenseSchedule>();
             selectedGroupFreeTimes = new List<TimePeriod>();
             dbHandler = new DBce();
-            InitData();
         }
-
-        private void InitData()
-        {
-         
-            //initIsolatedGroups();
-        }
-
+    
         /* This method will be called by the GUI to add multigrouped panelists to the tree.
          * */
         public void AddPanelistsToTree(TreeNodeCollection tree)
@@ -79,12 +72,6 @@ namespace introse
             }
         }
 
-        public void AddGroupsToTree()
-        {
-
-        }
-
-
         public void AddIsolatedGroupsToList(TreeNodeCollection tree)
         {
             String query = "select thesisgroupID,title from thesisgroup where thesisgroupID not in (select thesisgroupID from panelassignment where panelistID in (select panelistID from panelassignment group by panelistID having count(*) > 1));";
@@ -100,7 +87,6 @@ namespace introse
                 tree.Add(node);
             }
         }
-       
 
         /*The following two methods are the important ones for initializing the lists 
          * to be used for drawing the available times and defense schedules.
@@ -113,16 +99,17 @@ namespace introse
         {
             clusterDefScheds.Clear();
             List<String> groupIDs = new List<String>();
-            String query = "SELECT thesisGroupID FROM panelassignment where panelistID = '"+panelistID+"';";
-
-            groupIDs = dbHandler.Select(query, 1)[0];
+            String query = "select thesisGroupID from panelassignment where panelistID = '" + panelistID + "';";
+            
+            groupIDs = (dbHandler.Select(query, 1))[0];
+       
             int size = groupIDs.Count;
             DefenseSchedule defSched;
-
-            for (int i = 0; i < size; i++) 
+       
+            for (int i = 0; i < size; i++)
             {
                 defSched = GetDefSched(startDate, endDate, groupIDs.ElementAt(i));
-                if(defSched != null)
+                if (defSched != null)
                     clusterDefScheds.Add(defSched);
             }
         }
@@ -130,12 +117,13 @@ namespace introse
         /* This method returns a DefenseSchedule object within the specified startDate and endDDate 
          * for the specified thesis group. If there is none, the method returns null.
          */
-        private DefenseSchedule GetDefSched(DateTime startDate, DateTime endDate, String thesisGroupID) 
+        private DefenseSchedule GetDefSched(DateTime startDate, DateTime endDate, String thesisGroupID)
         {
-            String query = "SELECT defenseDateTime, place FROM defenseSchedule WHERE thesisGroupID = '" + thesisGroupID + "' AND defenseDate >="+startDate.Date+" AND defenseDate <="+endDate.Date+";";
-            List<String>[]  columns = dbHandler.Select(query, 2);
+            String query = "SELECT defenseDateTime, place FROM defenseSchedule WHERE thesisGroupID = '" + thesisGroupID + "' AND defenseDateTime >='" + startDate.Date + "' AND defenseDateTime <='" + endDate.Date + "';";
+        
+            List<String>[] columns = dbHandler.Select(query, 2);
 
-            if (columns[0].Count == 0) //If the query result is an empty set.
+            if (columns[0].Count == 0)//If the query result is an empty set.
                 return null;
 
             int defDuration = GetMinsDuration(thesisGroupID);
@@ -146,8 +134,8 @@ namespace introse
             DateTime endTime = startTime.AddMinutes(defDuration);
             String place = columns[1].ElementAt(0);
             String groupTitle;
-            query = "SELECT title from thesisGroup WHERE thesisGroupID = '"+thesisGroupID+"';";
-            groupTitle = dbHandler.Select(query,1)[0].ElementAt(0);
+            query = "SELECT title from thesisGroup WHERE thesisGroupID = '" + thesisGroupID + "';";
+            groupTitle = dbHandler.Select(query, 1)[0].ElementAt(0);
 
             return new DefenseSchedule(startTime, endTime, place, groupTitle);
         }
@@ -155,7 +143,7 @@ namespace introse
         /* This method returns the defense schedule duration in minutes depending on the thesis group's course (THSST-1 or THSST-3)
          * This method is used in GetDefSched().
          */
-        private int GetMinsDuration(String thesisGroupID) 
+        private int GetMinsDuration(String thesisGroupID)
         {
             const int thsst1DefDurationInMins = 60;
             const int thsst3DefDurationInMins = 120;
@@ -171,15 +159,51 @@ namespace introse
             return -1;
         }
 
-
         /* This method will be called by the UI to refresh selectedGroupFreeSlots when
          * a thesis group is selected, whether in tree view (for clusters) or listbox (for isolated groups).
          * The parameters are still to be changed.
          * */
         public void RefreshSelectedGroupFreeTimes(DateTime startDate, DateTime endDate, int thesisGroupID)
         {
+            List<String> studentIDs = new List<String>();
+            List<String> panelistIDs = new List<String>();
+            List<String>[] columns;
+            String query;
+            int size;
+
+            /*Start: 
+             * Initialize the studentIDs and panelistIDs belonging to this thesis group.
+             * */
+            
+            query = "SELECT studentID FROM Student WHERE thesisGroupID = '" + thesisGroupID + "';";
+
+            columns = dbHandler.Select(query, 1);
+            size = columns[0].Count;
+
+            for (int i = 0; i < size; i++)
+                studentIDs.Add(columns[0].ElementAt(i));
+
+            query = "SELECT panelistID FROM PanelAssignment WHERE thesisGroupdID = '" + thesisGroupID + "';";
+            columns = dbHandler.Select(query, 1);
+            size = columns[0].Count;
+
+            for (int i = 0; i < size; i++)
+                panelistIDs.Add(columns[0].ElementAt(i));
+
+            /* End */
+
+            /*Start:
+             * Gather all timeslots of these seven people, and place them inside a collection.
+             * */
+
+            
+
+
+            /* End */
+
+
+
 
         }
-
     }
 }
