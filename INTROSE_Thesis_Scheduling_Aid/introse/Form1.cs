@@ -61,14 +61,6 @@ namespace introse
 
             scroll = true;
 
-            defstart = new List<DateTime>();
-            defstart.Add(new DateTime(2013, 3, 6, 8, 30, 0));
-            defstart.Add(new DateTime(2013, 3, 8, 8, 0, 0));
-
-            defend = new List<DateTime>();
-            defend.Add(new DateTime(2013, 3, 6, 9, 30, 0));
-            defend.Add(new DateTime(2013, 3, 8, 10, 0, 0));
-
             treeView1.BeginUpdate();
             sdm.AddPanelistsToTree(treeView1.Nodes);
             treeView1.EndUpdate();
@@ -86,7 +78,7 @@ namespace introse
 
         void tableLayoutPanel1_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
         {
-            e.Graphics.DrawRectangle(new Pen(Color.Black), e.CellBounds);
+            //e.Graphics.DrawRectangle(new Pen(Color.Black), e.CellBounds);
 
             if (e.Column != 0)
             {
@@ -99,11 +91,12 @@ namespace introse
 
                 DateTime curr = new DateTime(curr_yr, curr_mo, curr_day, curr_hr, curr_min, 0);
 
-                for (int i = 0; i < defstart.Count; i++)
+                for (int i = 0; i < sdm.ClusterDefScheds.Count; i++)
                 {
-                    if (curr.CompareTo(defstart.ElementAt(i)) >= 0 && curr.CompareTo(defend.ElementAt(i)) <= 0)
+                    if (sdm.ClusterDefScheds.ElementAt(i).StartTime.CompareTo(curr) >= 0 && sdm.ClusterDefScheds.ElementAt(i).EndTime.CompareTo(curr) <= 0)
                     {
-                        e.Graphics.FillRectangle(Brushes.LightBlue, e.CellBounds.X+1, e.CellBounds.Y+1, e.CellBounds.Width-1, e.CellBounds.Height-1);
+                        //e.Graphics.FillRectangle(Brushes.LightBlue, e.CellBounds.X+1, e.CellBounds.Y+1, e.CellBounds.Width-1, e.CellBounds.Height-1);
+                        e.Graphics.FillRectangle(Brushes.LightBlue, e.CellBounds);
                     }
                 }
             }
@@ -259,7 +252,6 @@ namespace introse
         private List<String> intervals;
         private List<Label> time_table, days;
         private bool scroll;
-        private List<DateTime> defstart, defend;
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -284,6 +276,11 @@ namespace introse
         {
             Console.WriteLine("ID: " + e.Node.Name);
             Console.WriteLine(e.Node);
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
