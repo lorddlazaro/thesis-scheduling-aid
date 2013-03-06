@@ -78,6 +78,7 @@
             this.switch_sort = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -260,9 +261,9 @@
             // 
             // day1
             // 
-            this.day1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.day1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.day1.Location = new System.Drawing.Point(86, 63);
             this.day1.Name = "day1";
             this.day1.Size = new System.Drawing.Size(86, 35);
@@ -578,7 +579,7 @@
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F);
             this.label8.Location = new System.Drawing.Point(0, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(601, 60);
+            this.label8.Size = new System.Drawing.Size(601, 63);
             this.label8.TabIndex = 1;
             this.label8.Text = "MAY THIS PLACEHOLDER EXIST \r\nFOR ALL ETERNITY";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -626,6 +627,7 @@
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(1, 1);
@@ -633,6 +635,15 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(781, 560);
             this.tabControl1.TabIndex = 0;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(773, 534);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "View Defense Schedules";
+            this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
@@ -734,6 +745,7 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.TreeView treeView2;
+        private System.Windows.Forms.TabPage tabPage4;
 
 
     }
