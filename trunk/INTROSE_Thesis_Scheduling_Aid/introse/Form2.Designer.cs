@@ -32,9 +32,9 @@
             System.Windows.Forms.Label defenseIDLabel;
             System.Windows.Forms.Label placeLabel;
             System.Windows.Forms.Label thesisGroupIDLabel;
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
             System.Windows.Forms.Label defenseDateTimeLabel;
             System.Windows.Forms.Label defenseDateTimeLabel1;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
             this.iNTROSEDBDataSet = new introse.INTROSEDBDataSet();
             this.defenseScheduleBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.defenseScheduleTableAdapter = new introse.INTROSEDBDataSetTableAdapters.DefenseScheduleTableAdapter();
@@ -94,6 +94,24 @@
             thesisGroupIDLabel.Size = new System.Drawing.Size(87, 13);
             thesisGroupIDLabel.TabIndex = 7;
             thesisGroupIDLabel.Text = "Thesis Group ID:";
+            // 
+            // defenseDateTimeLabel
+            // 
+            defenseDateTimeLabel.AutoSize = true;
+            defenseDateTimeLabel.Location = new System.Drawing.Point(12, 127);
+            defenseDateTimeLabel.Name = "defenseDateTimeLabel";
+            defenseDateTimeLabel.Size = new System.Drawing.Size(76, 13);
+            defenseDateTimeLabel.TabIndex = 8;
+            defenseDateTimeLabel.Text = "Defense Date:";
+            // 
+            // defenseDateTimeLabel1
+            // 
+            defenseDateTimeLabel1.AutoSize = true;
+            defenseDateTimeLabel1.Location = new System.Drawing.Point(12, 152);
+            defenseDateTimeLabel1.Name = "defenseDateTimeLabel1";
+            defenseDateTimeLabel1.Size = new System.Drawing.Size(76, 13);
+            defenseDateTimeLabel1.TabIndex = 9;
+            defenseDateTimeLabel1.Text = "Defense Time:";
             // 
             // iNTROSEDBDataSet
             // 
@@ -273,15 +291,6 @@
             this.thesisGroupIDTextBox.Size = new System.Drawing.Size(179, 20);
             this.thesisGroupIDTextBox.TabIndex = 8;
             // 
-            // defenseDateTimeLabel
-            // 
-            defenseDateTimeLabel.AutoSize = true;
-            defenseDateTimeLabel.Location = new System.Drawing.Point(12, 127);
-            defenseDateTimeLabel.Name = "defenseDateTimeLabel";
-            defenseDateTimeLabel.Size = new System.Drawing.Size(76, 13);
-            defenseDateTimeLabel.TabIndex = 8;
-            defenseDateTimeLabel.Text = "Defense Date:";
-            // 
             // defenseDateTimeDateTimePicker
             // 
             this.defenseDateTimeDateTimePicker.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.defenseScheduleBindingSource, "defenseDateTime", true));
@@ -289,15 +298,6 @@
             this.defenseDateTimeDateTimePicker.Name = "defenseDateTimeDateTimePicker";
             this.defenseDateTimeDateTimePicker.Size = new System.Drawing.Size(179, 20);
             this.defenseDateTimeDateTimePicker.TabIndex = 9;
-            // 
-            // defenseDateTimeLabel1
-            // 
-            defenseDateTimeLabel1.AutoSize = true;
-            defenseDateTimeLabel1.Location = new System.Drawing.Point(12, 152);
-            defenseDateTimeLabel1.Name = "defenseDateTimeLabel1";
-            defenseDateTimeLabel1.Size = new System.Drawing.Size(76, 13);
-            defenseDateTimeLabel1.TabIndex = 9;
-            defenseDateTimeLabel1.Text = "Defense Time:";
             // 
             // defenseDateTimeDateTimePicker1
             // 
