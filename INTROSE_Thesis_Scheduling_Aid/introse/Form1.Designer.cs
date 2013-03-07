@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.button1 = new System.Windows.Forms.Button();
             this.table_interval = new System.Windows.Forms.Label();
             this.interval_down = new System.Windows.Forms.PictureBox();
             this.interval_up = new System.Windows.Forms.PictureBox();
@@ -82,6 +83,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.button2 = new System.Windows.Forms.Button();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -114,6 +116,8 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.button2);
+            this.splitContainer1.Panel1.Controls.Add(this.button1);
             this.splitContainer1.Panel1.Controls.Add(this.table_interval);
             this.splitContainer1.Panel1.Controls.Add(this.interval_down);
             this.splitContainer1.Panel1.Controls.Add(this.interval_up);
@@ -140,6 +144,16 @@
             this.splitContainer1.Size = new System.Drawing.Size(767, 528);
             this.splitContainer1.SplitterDistance = 600;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(517, 4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 56);
+            this.button1.TabIndex = 16;
+            this.button1.Text = "Add Defense";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // table_interval
             // 
@@ -579,9 +593,9 @@
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F);
             this.label8.Location = new System.Drawing.Point(0, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(601, 63);
+            this.label8.Size = new System.Drawing.Size(432, 63);
             this.label8.TabIndex = 1;
-            this.label8.Text = "MAY THIS PLACEHOLDER EXIST \r\nFOR ALL ETERNITY";
+            this.label8.Text = "MAY THIS PLACEHOLDER\r\nEXIST FOR ALL ETERNITY";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // treeView2
@@ -669,6 +683,15 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(438, 4);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 56);
+            this.button2.TabIndex = 17;
+            this.button2.Text = "The \'Does Nothing\' Button";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -746,6 +769,8 @@
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.TreeView treeView2;
         private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
 
 
     }
