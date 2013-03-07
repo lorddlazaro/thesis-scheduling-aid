@@ -15,6 +15,7 @@ namespace introse
         DBce db = new DBce();
         SchedulingDataManager sdm = new SchedulingDataManager();
         String currPanelistID; //To keep track of which cluster is currently selected.
+        Form2 form2;
 
         public Form1()
         {
@@ -286,6 +287,12 @@ namespace introse
         {
             Console.WriteLine("ID: " + e.Node.Name);
             Console.WriteLine(e.Node);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            form2 = new Form2();
+            form2.Show();
         }
     }
 }
