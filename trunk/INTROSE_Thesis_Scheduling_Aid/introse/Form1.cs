@@ -305,5 +305,119 @@ namespace introse
             form3 = new AddThesisGroup();
             form3.Show();
         }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            form3 = new AddThesisGroup();
+            form3.Show();
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            form2 = new AddDefenseSchedule();
+            form2.Show();
+        }
+
+        private void toolStripLabel2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            String curr = this.table_interval.Text.Substring(23);
+            String put = "Table Interval Length: ";
+
+            if (intervals.IndexOf(curr) == 3)
+                return;
+            put += intervals.ElementAt(intervals.IndexOf(curr) + 1);
+
+            this.table_interval.Text = put;
+            topleft = new TimeSpan(8, 0, 0);
+            time_table_update();
+        }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            String curr = this.table_interval.Text.Substring(23);
+            String put = "Table Interval Length: ";
+
+            if (intervals.IndexOf(curr) == 0)
+                return;
+            put += intervals.ElementAt(intervals.IndexOf(curr) - 1);
+
+            this.table_interval.Text = put;
+            topleft = new TimeSpan(8, 0, 0);
+            time_table_update();
+        }
+
+        private void time_scroll_down_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void time_scroll_up_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void time_scroll_up_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void time_scroll_up_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void time_scroll_down_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void time_scroll_down_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void tableLayoutPanel1_Paint_1(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void toolStripLabel4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            if (switch_sort.Text.Equals("View Clustered Groups"))
+            {
+                switch_sort.Text = "View Isolated Groups";
+                //treeView1.Visible = true;
+                //treeView2.Visible = false;
+                treeView2.Enabled = false;
+                treeView1.Enabled = true;
+                treeView2.Hide();
+                treeView1.Show();
+            }
+            else
+            {
+                switch_sort.Text = "View Clustered Groups";
+                //treeView1.Visible = false;
+                //treeView2.Visible = true;
+                treeView1.Enabled = false;
+                treeView2.Enabled = true;
+                treeView1.Hide();
+                treeView2.Show();
+            }
+        }
     }
 }
