@@ -15,7 +15,8 @@ namespace introse
         DBce db = new DBce();
         SchedulingDataManager sdm = new SchedulingDataManager();
         String currPanelistID; //To keep track of which cluster is currently selected.
-        Form2 form2;
+        AddDefenseSchedule form2;
+        AddThesisGroup form3;
 
         public Form1()
         {
@@ -95,7 +96,7 @@ namespace introse
 
                 for (int i = 0; i < sdm.ClusterDefScheds.Count; i++)
                 {
-                    if (sdm.ClusterDefScheds.ElementAt(i).StartTime.CompareTo(curr) <= 0 && sdm.ClusterDefScheds.ElementAt(i).EndTime.CompareTo(curr) >= 0)
+                    if (sdm.ClusterDefScheds.ElementAt(i).StartTime.CompareTo(curr) <= 0 && sdm.ClusterDefScheds.ElementAt(i).EndTime.CompareTo(curr) > 0)
                     {
                         e.Graphics.FillRectangle(Brushes.LightBlue, e.CellBounds.X+1, e.CellBounds.Y+1, e.CellBounds.Width-1, e.CellBounds.Height-1);
                     }
@@ -279,8 +280,8 @@ namespace introse
             currPanelistID = e.Node.Name;
 
             sdm.RefreshClusterDefSchedules(start,end,currPanelistID);
-            if(sdm.ClusterDefScheds.Count > 0)
-                tableLayoutPanel1.Refresh();
+            //if(sdm.ClusterDefScheds.Count > 0)
+            tableLayoutPanel1.Refresh();
         }
         
         private void treeView2_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -291,8 +292,14 @@ namespace introse
 
         private void button1_Click(object sender, EventArgs e)
         {
-            form2 = new Form2();
+            form2 = new AddDefenseSchedule();
             form2.Show();
+        }
+        
+        private void button2_Click(object sender, EventArgs e)
+        {
+            form3 = new AddThesisGroup();
+            form3.Show();
         }
     }
 }
