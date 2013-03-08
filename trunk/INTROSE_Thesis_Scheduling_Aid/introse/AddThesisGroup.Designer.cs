@@ -169,7 +169,7 @@
             this.thesisGroupBindingNavigator.MovePreviousItem = this.bindingNavigatorMovePreviousItem;
             this.thesisGroupBindingNavigator.Name = "thesisGroupBindingNavigator";
             this.thesisGroupBindingNavigator.PositionItem = this.bindingNavigatorPositionItem;
-            this.thesisGroupBindingNavigator.Size = new System.Drawing.Size(280, 25);
+            this.thesisGroupBindingNavigator.Size = new System.Drawing.Size(283, 25);
             this.thesisGroupBindingNavigator.TabIndex = 0;
             this.thesisGroupBindingNavigator.Text = "bindingNavigator1";
             // 
@@ -311,7 +311,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(280, 164);
+            this.ClientSize = new System.Drawing.Size(283, 161);
             this.Controls.Add(titleLabel);
             this.Controls.Add(this.titleTextBox);
             this.Controls.Add(courseLabel);
