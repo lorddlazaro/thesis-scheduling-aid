@@ -75,7 +75,6 @@
             this.time_table24 = new System.Windows.Forms.Label();
             this.time_table25 = new System.Windows.Forms.Label();
             this.time_table26 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
             this.treeView2 = new System.Windows.Forms.TreeView();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.switch_sort = new System.Windows.Forms.Button();
@@ -85,6 +84,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.label8 = new System.Windows.Forms.Label();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -139,10 +139,10 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.Color.LavenderBlush;
-            this.splitContainer1.Panel2.Controls.Add(this.treeView2);
             this.splitContainer1.Panel2.Controls.Add(this.treeView1);
             this.splitContainer1.Panel2.Controls.Add(this.switch_sort);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
+            this.splitContainer1.Panel2.Controls.Add(this.treeView2);
             this.splitContainer1.Size = new System.Drawing.Size(767, 528);
             this.splitContainer1.SplitterDistance = 600;
             this.splitContainer1.TabIndex = 0;
@@ -296,9 +296,9 @@
             // 
             // day1
             // 
-            this.day1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.day1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.day1.Location = new System.Drawing.Point(86, 63);
             this.day1.Name = "day1";
             this.day1.Size = new System.Drawing.Size(86, 35);
@@ -608,25 +608,14 @@
             this.time_table26.Text = "8:30 PM";
             this.time_table26.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // label8
-            // 
-            this.label8.BackColor = System.Drawing.Color.HotPink;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 19F);
-            this.label8.Location = new System.Drawing.Point(0, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(351, 63);
-            this.label8.TabIndex = 1;
-            this.label8.Text = "MAY THIS PLACEHOLDER\r\nEXIST FOR ALL ETERNITY";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // treeView2
             // 
             this.treeView2.HotTracking = true;
-            this.treeView2.Location = new System.Drawing.Point(3, 267);
+            this.treeView2.Location = new System.Drawing.Point(3, 44);
             this.treeView2.Name = "treeView2";
             this.treeView2.ShowPlusMinus = false;
             this.treeView2.ShowRootLines = false;
-            this.treeView2.Size = new System.Drawing.Size(157, 226);
+            this.treeView2.Size = new System.Drawing.Size(157, 449);
             this.treeView2.TabIndex = 7;
             this.treeView2.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView2_NodeMouseClick);
             // 
@@ -635,7 +624,7 @@
             this.treeView1.HotTracking = true;
             this.treeView1.Location = new System.Drawing.Point(3, 44);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(157, 217);
+            this.treeView1.Size = new System.Drawing.Size(157, 449);
             this.treeView1.TabIndex = 6;
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             // 
@@ -704,6 +693,17 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // label8
+            // 
+            this.label8.BackColor = System.Drawing.Color.HotPink;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 19F);
+            this.label8.Location = new System.Drawing.Point(0, 0);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(351, 63);
+            this.label8.TabIndex = 1;
+            this.label8.Text = "MAY THIS PLACEHOLDER\r\nEXIST FOR ALL ETERNITY";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -731,7 +731,6 @@
 
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage2;
@@ -784,6 +783,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Label label8;
 
 
     }
