@@ -113,6 +113,8 @@ namespace introse
                 //treeView2.Visible = false;
                 treeView2.Enabled = false;
                 treeView1.Enabled = true;
+                treeView2.Hide();
+                treeView1.Show();
             }
             else
             {
@@ -121,6 +123,8 @@ namespace introse
                 //treeView2.Visible = true;
                 treeView1.Enabled = false;
                 treeView2.Enabled = true;
+                treeView1.Hide();
+                treeView2.Show();
             }
         }
 
