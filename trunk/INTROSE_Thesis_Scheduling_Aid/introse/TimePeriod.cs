@@ -5,7 +5,7 @@ using System.Text;
 
 namespace introse
 {
-    public class TimePeriod : IComparable<TimePeriod> , IEquatable<TimePeriod>
+    public class TimePeriod : IComparable<TimePeriod>, IEquatable<TimePeriod>
     {
         //startTime and endTime represent time only. Date does not matter here. 
         private DateTime startTime;
@@ -15,7 +15,7 @@ namespace introse
         public DateTime EndTime { get { return endTime; } }
 
 
-        public override String ToString() 
+        public override String ToString()
         {
             return startTime.TimeOfDay + "-" + endTime.TimeOfDay;
         }
@@ -28,16 +28,16 @@ namespace introse
             if (this.endTime.Hour != other.endTime.Hour || this.endTime.Minute != other.endTime.Minute || this.endTime.Second != other.endTime.Second)
                 return false;
             return true;
-                //return this.startTime.TimeOfDay.CompareTo(other.StartTime.TimeOfDay) == 0 && this.startTime.TimeOfDay.CompareTo(other.endTime.TimeOfDay) == 0;
+            //return this.startTime.TimeOfDay.CompareTo(other.StartTime.TimeOfDay) == 0 && this.startTime.TimeOfDay.CompareTo(other.endTime.TimeOfDay) == 0;
         }
 
-        public TimePeriod(DateTime startTime, DateTime endTime) 
+        public TimePeriod(DateTime startTime, DateTime endTime)
         {
             this.startTime = startTime;
             this.endTime = endTime;
         }
 
-        public int CompareTo(TimePeriod other) 
+        public int CompareTo(TimePeriod other)
         {
             //return startTime.CompareTo(other.startTime);
             return this.startTime.TimeOfDay.CompareTo(other.startTime.TimeOfDay);
@@ -63,11 +63,11 @@ namespace introse
             return false;
         }
 
-        public bool IntersectsInclusive(TimePeriod other) 
+        public bool IntersectsInclusive(TimePeriod other)
         {
-            if (startTime.CompareTo(other.startTime) == 0 && endTime.CompareTo(other.endTime) == 0 )
+            if (startTime.CompareTo(other.startTime) == 0 && endTime.CompareTo(other.endTime) == 0)
                 return true;
-            if (IsBetweenInclusive(startTime, endTime, other.startTime) || IsBetweenInclusive(startTime, endTime, other.endTime)) 
+            if (IsBetweenInclusive(startTime, endTime, other.startTime) || IsBetweenInclusive(startTime, endTime, other.endTime))
                 return true;
             if (IsBetweenInclusive(other.startTime, other.endTime, startTime) || IsBetweenInclusive(other.startTime, other.endTime, endTime))
                 return true;
@@ -75,7 +75,7 @@ namespace introse
             return false;
         }
 
-        private bool IsBetweenInclusive(DateTime start, DateTime end, DateTime check) 
+        private bool IsBetweenInclusive(DateTime start, DateTime end, DateTime check)
         {
             if (check.TimeOfDay.CompareTo(start.TimeOfDay) >= 0 && check.TimeOfDay.CompareTo(end.TimeOfDay) <= 0)
                 return true;
