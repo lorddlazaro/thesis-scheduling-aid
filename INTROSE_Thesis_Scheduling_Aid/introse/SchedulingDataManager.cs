@@ -11,7 +11,7 @@ namespace introse
         private const int DEFWEEK_DAYS = 6;
         private const int THSST1_DEF_DURATION_MINS = 60;
         private const int THSST3_DEF_DURATION_MINS = 120;
-        private const int START_HOUR = 8 ;
+        private const int START_HOUR = 8;
         private const int START_MIN = 0;
         private const int LIMIT_HOUR = 21;
         private const int LIMIT_MIN = 0;
@@ -41,7 +41,7 @@ namespace introse
             InitListTimePeriodArray(selectedGroupFreeTimes);
             dbHandler = new DBce();
         }
-    
+
         /* This method will be called by the GUI to add multigrouped panelists to the tree.
          * */
         public void AddPanelistsToTree(TreeNodeCollection tree)
@@ -109,12 +109,12 @@ namespace introse
             clusterDefScheds.Clear();
             List<String> groupIDs = new List<String>();
             String query = "select thesisGroupID from panelassignment where panelistID = '" + panelistID + "';";
-            
+
             groupIDs = (dbHandler.Select(query, 1))[0];
-       
+
             int size = groupIDs.Count;
             DefenseSchedule defSched;
-       
+
             for (int i = 0; i < size; i++)
             {
                 defSched = GetDefSched(startDate, endDate, groupIDs.ElementAt(i));
@@ -129,7 +129,7 @@ namespace introse
         private DefenseSchedule GetDefSched(DateTime startDate, DateTime endDate, String thesisGroupID)
         {
             String query = "SELECT defenseDateTime, place FROM defenseSchedule WHERE thesisGroupID = " + thesisGroupID + " AND defenseDateTime >='" + startDate.Date + "' AND defenseDateTime <='" + endDate.Date + "';";
-        
+
             List<String>[] columns = dbHandler.Select(query, 2);
 
             if (columns[0].Count == 0)//If the query result is an empty set.
@@ -164,7 +164,7 @@ namespace introse
             return -1;
         }
 
-        private void InitListTimePeriodArray(List<TimePeriod>[] list) 
+        private void InitListTimePeriodArray(List<TimePeriod>[] list)
         {
             for (int i = 0; i < DEFWEEK_DAYS; i++)
                 list[i] = new List<TimePeriod>();
@@ -179,8 +179,8 @@ namespace introse
             List<TimePeriod>[] days = new List<TimePeriod>[DEFWEEK_DAYS];
             InitListTimePeriodArray(days);
             AddBusyTimePeriods(thesisGroupID, days);
-            
-            for (int i = 0; i < DEFWEEK_DAYS; i++) 
+
+            for (int i = 0; i < DEFWEEK_DAYS; i++)
             {
                 //Console.WriteLine("Day " + i);
                 List<TimePeriod> mergedPeriods = new List<TimePeriod>();
@@ -188,7 +188,7 @@ namespace introse
                 int size = currDay.Count;
                 //Console.WriteLine("Before merging: Day" + i);
                 //DateTimeHelper.PrintTimePeriods(currDay);
-                if (size > 0) 
+                if (size > 0)
                 {
                     //Console.WriteLine("Going to merge day:" + i);
                     TimePeriod curr = currDay.ElementAt(0);
@@ -196,19 +196,19 @@ namespace introse
                     for (int j = 1; j < size; j++)
                     {
                         //Console.Write("j: "+j+" ==== ");
-                      
-                            if (curr.IntersectsInclusive(currDay.ElementAt(j)))
-                            {
-                                //Console.WriteLine(curr+" intersects with " + currDay.ElementAt(j));
-                                curr = MergeTimePeriods(curr, currDay.ElementAt(j));
-                            }
-                            else
-                            {
-                                //Console.WriteLine("here with "+curr);
-                                mergedPeriods.Add(curr);
-                                curr = currDay.ElementAt(j);
-                            }
-                        
+
+                        if (curr.IntersectsInclusive(currDay.ElementAt(j)))
+                        {
+                            //Console.WriteLine(curr+" intersects with " + currDay.ElementAt(j));
+                            curr = MergeTimePeriods(curr, currDay.ElementAt(j));
+                        }
+                        else
+                        {
+                            //Console.WriteLine("here with "+curr);
+                            mergedPeriods.Add(curr);
+                            curr = currDay.ElementAt(j);
+                        }
+
                     }
 
                     if (!isNewSet)
@@ -219,26 +219,26 @@ namespace introse
 
                 //Console.WriteLine("After merging: Day" + i);
                 //DateTimeHelper.PrintTimePeriods(mergedPeriods);
-                
-                DateTime currStart = new DateTime(2013,1,1, START_HOUR, START_MIN, 0 );
+
+                DateTime currStart = new DateTime(2013, 1, 1, START_HOUR, START_MIN, 0);
                 DateTime currEnd;
                 size = mergedPeriods.Count;
                 List<TimePeriod> currDayFreeSlots = new List<TimePeriod>();
-                for (int j = 0; j < size; j++) 
+                for (int j = 0; j < size; j++)
                 {
                     currEnd = mergedPeriods.ElementAt(j).StartTime;
-                    
+
                     //if (currStart != currEnd in terms of time only).
-                    if (currStart.TimeOfDay.CompareTo(currEnd.TimeOfDay)!=0) 
+                    if (currStart.TimeOfDay.CompareTo(currEnd.TimeOfDay) != 0)
                         currDayFreeSlots.Add(new TimePeriod(currStart, currEnd));
-                    
+
                     currStart = mergedPeriods.ElementAt(j).EndTime;
                 }
 
                 //The following makes sure the free times end at 9pm.
-                
 
-                if(currStart.Hour < LIMIT_HOUR || currStart.Hour == LIMIT_HOUR && currStart.Minute < LIMIT_MIN)
+
+                if (currStart.Hour < LIMIT_HOUR || currStart.Hour == LIMIT_HOUR && currStart.Minute < LIMIT_MIN)
                 {
                     currDayFreeSlots.Add(new TimePeriod(currStart, new DateTime(2013, 1, 1, LIMIT_HOUR, LIMIT_MIN, 0)));
                 }
@@ -270,8 +270,8 @@ namespace introse
             {
                 query = "SELECT timeslotID FROM student s, studentSchedule ss WHERE s.studentID = '" + studentIDs[0].ElementAt(i) + "' AND s.studentID = ss.studentID;";
                 AddUniqueTimeSlots(timeSlotIDs, dbHandler.Select(query, 1)[0]);
-                
-                query = "SELECT eventID from studentEventRecord WHERE studentID = '"+studentIDs[0].ElementAt(i)+"';";
+
+                query = "SELECT eventID from studentEventRecord WHERE studentID = '" + studentIDs[0].ElementAt(i) + "';";
                 AddUniqueTimeSlots(eventIDs, dbHandler.Select(query, 1)[0]);
             }
 
@@ -284,7 +284,7 @@ namespace introse
                 query = "SELECT timeslotID FROM timeslot where panelistID = '" + panelistIDs[0].ElementAt(i) + "';";
                 AddUniqueTimeSlots(timeSlotIDs, dbHandler.Select(query, 1)[0]);
 
-                query = "SELECT eventID from PanelistEventRecord WHERE panelistID = '"+panelistIDs[0].ElementAt(i)+"';";
+                query = "SELECT eventID from PanelistEventRecord WHERE panelistID = '" + panelistIDs[0].ElementAt(i) + "';";
                 AddUniqueTimeSlots(eventIDs, dbHandler.Select(query, 1)[0]);
             }
             /* End */
@@ -293,7 +293,7 @@ namespace introse
              * 
              * */
             List<TimePeriod>[] classSlots = GetUniqueClassTimeSlots(timeSlotIDs);
-            
+
             List<TimePeriod>[] eventSlots = GetUniqueEventSlots(eventIDs);
 
             for (int i = 0; i < 6; i++)
@@ -312,26 +312,26 @@ namespace introse
         }
 
         //This method merges two intersecting timeperiods into one timeperiod to represent both.
-        private TimePeriod MergeTimePeriods(TimePeriod tp1, TimePeriod tp2) 
+        private TimePeriod MergeTimePeriods(TimePeriod tp1, TimePeriod tp2)
         {
             DateTime minStart;
             DateTime maxEnd;
 
-            if(tp1.StartTime.TimeOfDay.CompareTo(tp2.StartTime.TimeOfDay)<=0)
-            //if (DateTimeHelper.CompareTimes(tp1.StartTime, tp2.StartTime) <= 0)
+            if (tp1.StartTime.TimeOfDay.CompareTo(tp2.StartTime.TimeOfDay) <= 0)
+                //if (DateTimeHelper.CompareTimes(tp1.StartTime, tp2.StartTime) <= 0)
                 minStart = tp1.StartTime;
             else
                 minStart = tp2.StartTime;
 
-            if(tp1.EndTime.TimeOfDay.CompareTo(tp2.EndTime.TimeOfDay) >= 0)
-            //if (DateTimeHelper.CompareTimes(tp1.EndTime, tp2.EndTime) >= 0)
+            if (tp1.EndTime.TimeOfDay.CompareTo(tp2.EndTime.TimeOfDay) >= 0)
+                //if (DateTimeHelper.CompareTimes(tp1.EndTime, tp2.EndTime) >= 0)
                 maxEnd = tp1.EndTime;
             else
                 maxEnd = tp2.EndTime;
 
             return new TimePeriod(minStart, maxEnd);
         }
-         
+
         private List<TimePeriod>[] GetUniqueEventSlots(List<String> eventIDs)
         {
             int size = eventIDs.Count;
@@ -340,36 +340,36 @@ namespace introse
 
             List<TimePeriod>[] busySlots = new List<TimePeriod>[DEFWEEK_DAYS];
             InitListTimePeriodArray(busySlots);
-            
+
             int currDay;
             TimePeriod newTimePeriod;
 
             DateTime earliestTime = new DateTime(2013, 1, 1, START_HOUR, START_MIN, 0);
             DateTime latestTime = new DateTime(2013, 1, 1, LIMIT_HOUR, LIMIT_MIN, 0);
-            
-            for(int i=0; i<size; i++)
+
+            for (int i = 0; i < size; i++)
             {
-                query = "SELECT eventStart, eventEnd FROM Event WHERE eventID = "+eventIDs.ElementAt(i)+";";
+                query = "SELECT eventStart, eventEnd FROM Event WHERE eventID = " + eventIDs.ElementAt(i) + ";";
                 columns = dbHandler.Select(query, 2);
                 DateTime eventStart = Convert.ToDateTime(columns[0].ElementAt(0));
-                DateTime eventEnd = Convert.ToDateTime(columns[1].ElementAt(0)); 
+                DateTime eventEnd = Convert.ToDateTime(columns[1].ElementAt(0));
 
-                for(DateTime curr = eventStart ;curr.Date.CompareTo(eventEnd.Date) <= 0 ; curr = curr.AddDays(1))
+                for (DateTime curr = eventStart; curr.Date.CompareTo(eventEnd.Date) <= 0; curr = curr.AddDays(1))
                 {
                     currDay = (int)curr.DayOfWeek - 1;
-                    
-                    if(currDay >= 0) //If not sunday, because sunday is never included.
+
+                    if (currDay >= 0) //If not sunday, because sunday is never included.
                     {
                         newTimePeriod = null;
 
                         int comparisonToStart = curr.Date.CompareTo(eventStart.Date);
                         int comparisonToEnd = curr.Date.CompareTo(eventEnd.Date);
 
-                        if ( comparisonToStart == 0 && comparisonToEnd == 0)
+                        if (comparisonToStart == 0 && comparisonToEnd == 0)
                             newTimePeriod = new TimePeriod(eventStart, eventEnd);
                         else if (comparisonToStart == 0)
                         {
-                            if(eventStart.TimeOfDay.CompareTo(latestTime.TimeOfDay) < 0)
+                            if (eventStart.TimeOfDay.CompareTo(latestTime.TimeOfDay) < 0)
                                 newTimePeriod = new TimePeriod(eventStart, latestTime);
                         }
                         else if (comparisonToEnd == 0)
@@ -378,7 +378,7 @@ namespace introse
                             int comparisonToEarliest = eventEnd.TimeOfDay.CompareTo(earliestTime.TimeOfDay);
                             if (comparisonToLatest < 0 && comparisonToEarliest > 0)
                                 newTimePeriod = new TimePeriod(earliestTime, eventEnd);
-                            else if(comparisonToLatest >= 0)
+                            else if (comparisonToLatest >= 0)
                                 newTimePeriod = new TimePeriod(earliestTime, latestTime);
                         }
                         else
@@ -389,7 +389,7 @@ namespace introse
                             if (!busySlots[currDay].Contains(newTimePeriod))
                                 busySlots[currDay].Add(newTimePeriod);
                         }
-                    }  
+                    }
                 }
             }
 
@@ -402,11 +402,11 @@ namespace introse
             }
             Console.WriteLine();
             /*For debugging purposes*/
-            
+
             return busySlots;
         }
 
-        private List<TimePeriod>[] GetUniqueClassTimeSlots(List<String> timeSlotIDs) 
+        private List<TimePeriod>[] GetUniqueClassTimeSlots(List<String> timeSlotIDs)
         {
             String query;
             List<String>[] columns;
@@ -420,7 +420,7 @@ namespace introse
             int currDay;
             int size = timeSlotIDs.Count;
 
-            
+
             for (int i = 0; i < size; i++)
             {
                 query = "SELECT day, startTime, endTime FROM timeslot WHERE timeSlotID = '" + timeSlotIDs.ElementAt(i) + "';";
@@ -445,9 +445,9 @@ namespace introse
             return busySlots;
         }
 
-        private int ConvertToInt(String day) 
+        private int ConvertToInt(String day)
         {
-            if(day.Equals("M"))
+            if (day.Equals("M"))
                 return 0;
             if (day.Equals("T"))
                 return 1;
@@ -476,5 +476,8 @@ namespace introse
                     timeslotIDs.Add(newSlots.ElementAt(j));
             }
         }
+
+
+
     }
 }
