@@ -81,7 +81,7 @@ namespace introse
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
-            int xpos, ypos, width, height;
+            int xpos, ypos = 0, width = 108, height = 1690;
             int curr_day, curr_mo, curr_yr;
             DateTime dwd; // defense week date :D
 
@@ -108,7 +108,7 @@ namespace introse
                         a = sdm.ClusterDefScheds.ElementAt(j).StartTime.TimeOfDay - (new TimeSpan(8, 0, 0));
                         ypos = a.Hours * 120 + a.Minutes * 2;
 
-                        e.Graphics.FillRectangle(Brushes.LightBlue, xpos, ypos, width, height);
+                        e.Graphics.FillRectangle(Brushes.LightBlue, xpos+1, ypos+1, width-1, height);
                     }
                  }
 
@@ -116,56 +116,38 @@ namespace introse
 
                 for (int j = 0; j < sdm.SelectedGroupFreeTimes[freeTimeIndex].Count; j++)
                 {
-                    if (dwd.DayOfWeek == sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).StartTime.DayOfWeek)
-                    {
-                        TimeSpan a = sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).EndTime.TimeOfDay - sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).StartTime.TimeOfDay;
-                        height = a.Hours * 120 + a.Minutes * 2;
+                    TimeSpan a = sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).EndTime.TimeOfDay - sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).StartTime.TimeOfDay;
+                    height = a.Hours * 120 + a.Minutes * 2;
 
-                        a = sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).StartTime.TimeOfDay - (new TimeSpan(8, 0, 0));
-                        ypos = a.Hours * 120 + a.Minutes * 2;
+                    a = sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).StartTime.TimeOfDay - (new TimeSpan(8, 0, 0));
+                    ypos = a.Hours * 120 + a.Minutes * 2;
 
-                        e.Graphics.FillRectangle(Brushes.LightPink, xpos, ypos, width, height);
-                    }
+                    e.Graphics.FillRectangle(Brushes.LightPink, xpos+1, ypos+1, width-1, height);
                 }
             }
-        }
 
-        void tableLayoutPanel1_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
-        {
-            //e.Graphics.DrawRectangle(new Pen(Color.Black), e.CellBounds);
-
-            if (e.Column != 0)
+            // draw vertical borders
+            for (int i = 0; i < days.Count; i++)
             {
-                String day = days.ElementAt(e.Column - 1).Text.Split('\n')[0];
-
-                int curr_day = Convert.ToInt32(days.ElementAt(e.Column - 1).Text.Split('\n')[1].Split('/')[1]);
-                int curr_mo = Convert.ToInt32(days.ElementAt(e.Column - 1).Text.Split('\n')[1].Split('/')[0]);
-                int curr_yr = Convert.ToInt32(days.ElementAt(e.Column - 1).Text.Split('\n')[1].Split('/')[2]);
-
-                int curr_hr = Convert.ToInt32(time_table.ElementAt(e.Row).Text.Split(':')[0]);
-                int curr_min = Convert.ToInt32(time_table.ElementAt(e.Row).Text.Split(':')[1]);
-
-                DateTime curr = new DateTime(curr_yr, curr_mo, curr_day, curr_hr, curr_min, 0);
-
-                for (int i = 0; i < sdm.ClusterDefScheds.Count; i++)
-                {
-                    if (sdm.ClusterDefScheds.ElementAt(i).StartTime.CompareTo(curr) <= 0 && sdm.ClusterDefScheds.ElementAt(i).EndTime.CompareTo(curr) > 0)
-                    {
-                        e.Graphics.FillRectangle(Brushes.LightBlue, e.CellBounds.X+1, e.CellBounds.Y+1, e.CellBounds.Width-1, e.CellBounds.Height-1);
-                    }
-                }
-
-
-                for (int i = 0; i < sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].Count; i++)
-                {
-                    int comparisonWithStart = sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].ElementAt(i).StartTime.TimeOfDay.CompareTo(curr.TimeOfDay) ;
-                    int comparisonwithEnd = sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].ElementAt(i).EndTime.TimeOfDay.CompareTo(curr.TimeOfDay);
-                    if (comparisonWithStart <= 0 && comparisonwithEnd >= 0)
-                        e.Graphics.FillRectangle(Brushes.Yellow, e.CellBounds.X + 1, e.CellBounds.Y + 1, e.CellBounds.Width - 1, e.CellBounds.Height - 1);
-                }
+                xpos = 108 * (i + 1);
+                ypos = 1;
+                height = 1690;
+                e.Graphics.DrawRectangle(new Pen(Color.Black), xpos, ypos, width, height);
             }
-        }
 
+            // draw 30 min intervals
+            xpos = 0;
+            ypos = 1;
+            width = 756;
+
+            while (ypos <= 1690)
+            {
+                e.Graphics.DrawLine(new Pen(Color.Black), xpos, ypos, width, ypos);
+                ypos += 60;
+            }
+
+        }
+        
         private void switch_sort_Click(object sender, EventArgs e)
         {
             if (switch_sort.Text.Equals("View Clustered Groups"))
@@ -202,58 +184,7 @@ namespace introse
           
             tableLayoutPanel1.Refresh();
         }
-        /*
-        private void scroll_up()
-        {
-            TimeSpan interval = getInterval();
-            topleft -= interval;
-            if (topleft < new TimeSpan(8, 0, 0))
-                topleft = new TimeSpan(8, 0, 0);
-
-            time_table_update();
-        }
-
-        private void scroll_down()
-        {
-            TimeSpan interval = getInterval();
-            TimeSpan max = new TimeSpan(topleft.Hours, topleft.Minutes, 0);
-            topleft += interval;
-
-            for (int i = 0; i < time_table.Count; i++)
-                max += interval;
-
-            if (max >= new TimeSpan(21, 0, 0))
-                topleft -= interval;
-
-            time_table_update();
-        }
         
-        private void time_scroll_up_MouseDown(object sender, EventArgs e)
-        {
-            scroll_up();
-            timer1.Enabled = true;
-            timer1.Start();
-            scroll = true;
-        }
-
-        private void time_scroll_up_MouseUp(object sender, EventArgs e)
-        {
-            timer1.Stop();
-        }
-
-        private void time_scroll_down_MouseDown(object sender, EventArgs e)
-        {
-            scroll_down();
-            timer1.Enabled = true;
-            timer1.Start();
-            scroll = false;
-        }
-
-        private void time_scroll_down_MouseUp(object sender, EventArgs e)
-        {
-            timer1.Stop();
-        }
-        */
         private TimeSpan getInterval()
         {
                     return new TimeSpan(0, 5, 0);
@@ -273,15 +204,6 @@ namespace introse
             tableLayoutPanel1.Refresh();
         }
 
-        /*
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            if (scroll)
-                scroll_up();
-            else
-                scroll_down();
-        }
-        */
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             //Console.WriteLine("ID: " + e.Node.Name);
@@ -320,18 +242,6 @@ namespace introse
         {
             Console.WriteLine("ID: " + e.Node.Name);
             Console.WriteLine(e.Node);
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            form2 = new AddDefenseSchedule();
-            form2.Show();
-        }
-        
-        private void button2_Click(object sender, EventArgs e)
-        {
-            form3 = new AddThesisGroup();
-            form3.Show();
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
