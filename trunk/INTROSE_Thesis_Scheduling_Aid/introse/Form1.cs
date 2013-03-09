@@ -18,6 +18,11 @@ namespace introse
         AddDefenseSchedule form2;
         AddThesisGroup form3;
 
+        private TimeSpan topleft;
+        private List<String> intervals, day_names;
+        private List<Label> time_table, days;
+        private bool scroll;
+
         public Form1()
         {
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -42,6 +47,14 @@ namespace introse
             days.Add(day4);
             days.Add(day5);
             days.Add(day6);
+
+            day_names = new List<String>();
+            day_names.Add("Monday");
+            day_names.Add("Tuesday");
+            day_names.Add("Wednesday");
+            day_names.Add("Thursday");
+            day_names.Add("Friday");
+            day_names.Add("Saturday");
 
             defenseweek_start.Value = DateTime.Today;
 
@@ -80,6 +93,8 @@ namespace introse
 
             if (e.Column != 0)
             {
+                String day = days.ElementAt(e.Column - 1).Text.Split('\n')[0];
+
                 int curr_day = Convert.ToInt32(days.ElementAt(e.Column - 1).Text.Split('\n')[1].Split('/')[1]);
                 int curr_mo = Convert.ToInt32(days.ElementAt(e.Column - 1).Text.Split('\n')[1].Split('/')[0]);
                 int curr_yr = Convert.ToInt32(days.ElementAt(e.Column - 1).Text.Split('\n')[1].Split('/')[2]);
@@ -96,6 +111,24 @@ namespace introse
                         e.Graphics.FillRectangle(Brushes.LightBlue, e.CellBounds.X+1, e.CellBounds.Y+1, e.CellBounds.Width-1, e.CellBounds.Height-1);
                     }
                 }
+
+
+                Console.WriteLine(day_names.IndexOf(day) + " has " + sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].Count);
+                for (int i = 0; i < sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].Count; i++)
+                {
+                    int comparisonWithStart = sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].ElementAt(i).StartTime.TimeOfDay.CompareTo(curr.TimeOfDay) ;
+                    int comparisonwithEnd = sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].ElementAt(i).EndTime.TimeOfDay.CompareTo(curr.TimeOfDay);
+                    if (comparisonWithStart <= 0 && comparisonwithEnd >= 0)
+                        e.Graphics.FillRectangle(Brushes.DarkBlue, e.CellBounds.X + 1, e.CellBounds.Y + 1, e.CellBounds.Width - 1, e.CellBounds.Height - 1);
+                }
+         
+
+                /*
+                for (int i = 0; i < sdm.SelectedGroupFreeTimes[e.Column-1].Count; i++)
+                {
+                    if (sdm.SelectedGroupFreeTimes[e.Column-1].ElementAt(i).StartTime.CompareTo(curr) <= 0 && sdm.SelectedGroupFreeTimes[e.Column-1].ElementAt(i).EndTime.CompareTo(curr) > 0)
+                        e.Graphics.FillRectangle(Brushes.DarkBlue, e.CellBounds.X + 1, e.CellBounds.Y + 1, e.CellBounds.Width - 1, e.CellBounds.Height - 1);
+                }*/
             }
         }
 
@@ -206,10 +239,6 @@ namespace introse
             tableLayoutPanel1.Refresh();
         }
 
-        private TimeSpan topleft;
-        private List<String> intervals;
-        private List<Label> time_table, days;
-        private bool scroll;
         /*
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -223,14 +252,34 @@ namespace introse
         {
             //Console.WriteLine("ID: " + e.Node.Name);
             //Console.WriteLine(e.Node);
+            if (e.Node.Level == 0)
+            {
+                DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
+                DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
+                currPanelistID = e.Node.Name;
 
-            DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
-            DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
-            currPanelistID = e.Node.Name;
+                sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
+                if (sdm.ClusterDefScheds.Count > 0)
+                    tableLayoutPanel1.Refresh();
+            }
+            else if (e.Node.Level == 1)
+            {
+                currPanelistID = "";
+                DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
+                DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
 
-            sdm.RefreshClusterDefSchedules(start,end,currPanelistID);
-            //if(sdm.ClusterDefScheds.Count > 0)
-            tableLayoutPanel1.Refresh();
+                sdm.RefreshSelectedGroupFreeTimes(start, end, e.Node.Name);
+
+                for (int currDay = 0; currDay < 6; currDay++) 
+                {
+                    Console.WriteLine("Day: "+currDay);
+                    for (int i = 0; i < sdm.SelectedGroupFreeTimes[currDay].Count; i++)
+                        Console.WriteLine(sdm.SelectedGroupFreeTimes[currDay].ElementAt(i));
+                }
+
+
+                tableLayoutPanel1.Refresh();
+            }
         }
         
         private void treeView2_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -261,6 +310,15 @@ namespace introse
         {
             form2 = new AddDefenseSchedule();
             form2.Show();
+        }
+
+        private void toolStripButton1_Click_1(object sender, EventArgs e)
+        {
+            
+            if(toolStripButton1.Text.Equals("Collapse Clusters"))
+            {
+                  treeView1.CollapseAll(); 
+            }
         }
     }
 }
