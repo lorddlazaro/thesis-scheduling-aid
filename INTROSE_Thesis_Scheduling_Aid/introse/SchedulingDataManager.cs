@@ -265,6 +265,9 @@ namespace introse
             query = "SELECT studentID FROM Student WHERE thesisGroupID = " + thesisGroupID + ";";
             studentIDs = dbHandler.Select(query, 1)[0];
             size = studentIDs.Count;
+            
+            if (size == 0)
+                return;
 
             query = "SELECT distinct timeslotID FROM student s, studentSchedule ss WHERE s.studentID = ss.studentID AND (";
             for (int i = 0; i < size; i++) 
@@ -277,6 +280,7 @@ namespace introse
                     query += ");";
             }
        
+            
             AddUniqueTimeSlots(timeSlotIDs, dbHandler.Select(query, 1)[0]);
 
             query = "SELECT distinct eventID FROM studentEventRecord WHERE ";
@@ -299,6 +303,8 @@ namespace introse
             query = "SELECT panelistID FROM PanelAssignment WHERE thesisGroupID = " + thesisGroupID + ";";
             panelistIDs = dbHandler.Select(query, 1)[0];
             size = panelistIDs.Count;
+            if (size == 0)
+                return;
 
             query = "SELECT distinct timeslotID FROM timeslot WHERE ";
 
@@ -462,6 +468,9 @@ namespace introse
             TimePeriod newSlot;
             int currDay;
             int size = timeSlotIDs.Count;
+            if (size == 0)
+                return busySlots;
+
             query = "SELECT distinct day, startTime, endtime FROM timeslot WHERE ";
 
             for (int i = 0; i < size; i++) 
