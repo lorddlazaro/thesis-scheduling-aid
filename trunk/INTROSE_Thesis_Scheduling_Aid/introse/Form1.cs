@@ -119,7 +119,7 @@ namespace introse
                     int comparisonWithStart = sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].ElementAt(i).StartTime.TimeOfDay.CompareTo(curr.TimeOfDay) ;
                     int comparisonwithEnd = sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].ElementAt(i).EndTime.TimeOfDay.CompareTo(curr.TimeOfDay);
                     if (comparisonWithStart <= 0 && comparisonwithEnd >= 0)
-                        e.Graphics.FillRectangle(Brushes.DarkBlue, e.CellBounds.X + 1, e.CellBounds.Y + 1, e.CellBounds.Width - 1, e.CellBounds.Height - 1);
+                        e.Graphics.FillRectangle(Brushes.Yellow, e.CellBounds.X + 1, e.CellBounds.Y + 1, e.CellBounds.Width - 1, e.CellBounds.Height - 1);
                 }
          
 
@@ -317,7 +317,13 @@ namespace introse
             
             if(toolStripButton1.Text.Equals("Collapse Clusters"))
             {
-                  treeView1.CollapseAll(); 
+                  treeView1.CollapseAll();
+                  toolStripButton1.Text = "Expand Clusters";
+            }
+            else
+            {
+                treeView1.ExpandAll();
+                toolStripButton1.Text = "Collapse Clusters";
             }
         }
     }
