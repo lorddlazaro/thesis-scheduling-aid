@@ -38,6 +38,7 @@ namespace introse
         {
             clusterDefScheds = new List<DefenseSchedule>();
             selectedGroupFreeTimes = new List<TimePeriod>[DEFWEEK_DAYS];
+            InitListTimePeriodArray(selectedGroupFreeTimes);
             dbHandler = new DBce();
         }
     
@@ -475,8 +476,5 @@ namespace introse
                     timeslotIDs.Add(newSlots.ElementAt(j));
             }
         }
-
-       
-
     }
 }
