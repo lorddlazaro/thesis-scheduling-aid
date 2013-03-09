@@ -21,14 +21,13 @@ namespace introse
         private TimeSpan topleft;
         private List<String> intervals, day_names;
         private List<Label> time_table, days;
-        private bool scroll;
 
         public Form1()
         {
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             InitializeComponent();
             init();
-            tableLayoutPanel1.CellPaint += tableLayoutPanel1_CellPaint;
+            tableLayoutPanel1.Paint += tableLayoutPanel1_Paint;
         }
 
         private void init() 
@@ -71,8 +70,6 @@ namespace introse
             topleft = new TimeSpan(8, 0, 0);
             time_table_update();
 
-            scroll = true;
-
             treeView1.BeginUpdate();
             sdm.AddPanelistsToTree(treeView1.Nodes);
             treeView1.EndUpdate();
@@ -84,7 +81,53 @@ namespace introse
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
-            
+            int xpos, ypos, width, height;
+            int curr_day, curr_mo, curr_yr;
+            DateTime dwd; // defense week date :D
+
+            for (int i = 0; i < days.Count; i++)
+            {
+                curr_day = Convert.ToInt32(days.ElementAt(i).Text.Split('\n')[1].Split('/')[1]);
+                curr_mo = Convert.ToInt32(days.ElementAt(i).Text.Split('\n')[1].Split('/')[0]);
+                curr_yr = Convert.ToInt32(days.ElementAt(i).Text.Split('\n')[1].Split('/')[2]);
+
+                dwd = new DateTime(curr_yr, curr_mo, curr_day);
+
+                xpos = 108 * (i + 1); // x position of rectangle, columns 1-7
+                width = 108; // width of 1 col = 108
+
+                for (int j = 0; j < sdm.ClusterDefScheds.Count; j++)
+                {
+                    if (dwd.Day == sdm.ClusterDefScheds.ElementAt(j).StartTime.Day)
+                    {
+                        // 1 row = 5 mins = 10 pixels
+                        TimeSpan a = sdm.ClusterDefScheds.ElementAt(j).EndTime.TimeOfDay - sdm.ClusterDefScheds.ElementAt(j).StartTime.TimeOfDay;
+                        height = a.Hours * 120; // no minutes, defense length = 1 or 2 hours anyways, plus conversion to pixels
+
+                        // ypos = pixel value of start time compared to 8:00 AM
+                        a = sdm.ClusterDefScheds.ElementAt(j).StartTime.TimeOfDay - (new TimeSpan(8, 0, 0));
+                        ypos = a.Hours * 120 + a.Minutes * 2;
+
+                        e.Graphics.FillRectangle(Brushes.LightBlue, xpos, ypos, width, height);
+                    }
+                 }
+
+                int freeTimeIndex = day_names.IndexOf(dwd.DayOfWeek.ToString());
+
+                for (int j = 0; j < sdm.SelectedGroupFreeTimes[freeTimeIndex].Count; j++)
+                {
+                    if (dwd.DayOfWeek == sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).StartTime.DayOfWeek)
+                    {
+                        TimeSpan a = sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).EndTime.TimeOfDay - sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).StartTime.TimeOfDay;
+                        height = a.Hours * 120 + a.Minutes * 2;
+
+                        a = sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).StartTime.TimeOfDay - (new TimeSpan(8, 0, 0));
+                        ypos = a.Hours * 120 + a.Minutes * 2;
+
+                        e.Graphics.FillRectangle(Brushes.LightPink, xpos, ypos, width, height);
+                    }
+                }
+            }
         }
 
         void tableLayoutPanel1_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
@@ -113,7 +156,6 @@ namespace introse
                 }
 
 
-                Console.WriteLine(day_names.IndexOf(day) + " has " + sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].Count);
                 for (int i = 0; i < sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].Count; i++)
                 {
                     int comparisonWithStart = sdm.SelectedGroupFreeTimes[day_names.IndexOf(day)].ElementAt(i).StartTime.TimeOfDay.CompareTo(curr.TimeOfDay) ;
@@ -121,14 +163,6 @@ namespace introse
                     if (comparisonWithStart <= 0 && comparisonwithEnd >= 0)
                         e.Graphics.FillRectangle(Brushes.Yellow, e.CellBounds.X + 1, e.CellBounds.Y + 1, e.CellBounds.Width - 1, e.CellBounds.Height - 1);
                 }
-         
-
-                /*
-                for (int i = 0; i < sdm.SelectedGroupFreeTimes[e.Column-1].Count; i++)
-                {
-                    if (sdm.SelectedGroupFreeTimes[e.Column-1].ElementAt(i).StartTime.CompareTo(curr) <= 0 && sdm.SelectedGroupFreeTimes[e.Column-1].ElementAt(i).EndTime.CompareTo(curr) > 0)
-                        e.Graphics.FillRectangle(Brushes.DarkBlue, e.CellBounds.X + 1, e.CellBounds.Y + 1, e.CellBounds.Width - 1, e.CellBounds.Height - 1);
-                }*/
             }
         }
 
