@@ -46,19 +46,14 @@ namespace introse
             defenseweek_start.Value = DateTime.Today;
 
             time_table = new List<Label>();
-            time_table.Add(time_table1);       time_table.Add(time_table2);
-            time_table.Add(time_table3);       time_table.Add(time_table4);
-            time_table.Add(time_table5);       time_table.Add(time_table6);
-            time_table.Add(time_table7);       time_table.Add(time_table8);
-            time_table.Add(time_table9);       time_table.Add(time_table10);
-            time_table.Add(time_table11);      time_table.Add(time_table12);
-            time_table.Add(time_table13);      time_table.Add(time_table14);
-            time_table.Add(time_table15);      time_table.Add(time_table16);
-            time_table.Add(time_table17);      time_table.Add(time_table18);
-            time_table.Add(time_table19);      time_table.Add(time_table20);
-            time_table.Add(time_table21);      time_table.Add(time_table22);
-            time_table.Add(time_table23);      time_table.Add(time_table24);
-            time_table.Add(time_table25);      time_table.Add(time_table26);
+            for (int i = 0; i < tableLayoutPanel1.RowCount; i++)
+            {
+                time_table.Add(new Label());
+                time_table.ElementAt(i).Font = new Font("Segoe UI", 7);
+                time_table.ElementAt(i).AutoSize = false;
+                time_table.ElementAt(i).TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                tableLayoutPanel1.Controls.Add(time_table.ElementAt(i), 0, i);
+            }
 
             topleft = new TimeSpan(8, 0, 0);
             time_table_update();
@@ -81,7 +76,7 @@ namespace introse
 
         void tableLayoutPanel1_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
         {
-            e.Graphics.DrawRectangle(new Pen(Color.Black), e.CellBounds);
+            //e.Graphics.DrawRectangle(new Pen(Color.Black), e.CellBounds);
 
             if (e.Column != 0)
             {
@@ -109,51 +104,15 @@ namespace introse
             if (switch_sort.Text.Equals("View Clustered Groups"))
             {
                 switch_sort.Text = "View Isolated Groups";
-                //treeView1.Visible = true;
-                //treeView2.Visible = false;
-                treeView2.Enabled = false;
-                treeView1.Enabled = true;
                 treeView2.Hide();
                 treeView1.Show();
             }
             else
             {
                 switch_sort.Text = "View Clustered Groups";
-                //treeView1.Visible = false;
-                //treeView2.Visible = true;
-                treeView1.Enabled = false;
-                treeView2.Enabled = true;
                 treeView1.Hide();
                 treeView2.Show();
             }
-        }
-
-        private void interval_up_Click(object sender, EventArgs e)
-        {
-            String curr = this.table_interval.Text.Substring(23);
-            String put = "Table Interval Length: ";
-
-            if (intervals.IndexOf(curr) == 3)
-                return;
-            put += intervals.ElementAt(intervals.IndexOf(curr) + 1);
-
-            this.table_interval.Text = put;
-            topleft = new TimeSpan(8, 0, 0);
-            time_table_update();
-        }
-
-        private void interval_down_Click(object sender, EventArgs e)
-        {
-            String curr = this.table_interval.Text.Substring(23);
-            String put = "Table Interval Length: ";
-
-            if (intervals.IndexOf(curr) == 0)
-                return;
-            put += intervals.ElementAt(intervals.IndexOf(curr) - 1);
-
-            this.table_interval.Text = put;
-            topleft = new TimeSpan(8, 0, 0);
-            time_table_update();
         }
 
         private void defenseweek_start_ValueChanged(object sender, EventArgs e)
@@ -176,7 +135,7 @@ namespace introse
           
             tableLayoutPanel1.Refresh();
         }
-
+        /*
         private void scroll_up()
         {
             TimeSpan interval = getInterval();
@@ -227,24 +186,10 @@ namespace introse
         {
             timer1.Stop();
         }
-
+        */
         private TimeSpan getInterval()
         {
-            String a = this.table_interval.Text.Substring(23);
-
-            switch (intervals.IndexOf(a))
-            {
-                case 0:
                     return new TimeSpan(0, 5, 0);
-                case 1:
-                    return new TimeSpan(0, 10, 0);
-                case 2:
-                    return new TimeSpan(0, 15, 0);
-                case 3:
-                    return new TimeSpan(0, 30, 0);
-                default:
-                    return new TimeSpan(0, 0, 0);
-            }
         }
 
         private void time_table_update()
@@ -265,7 +210,7 @@ namespace introse
         private List<String> intervals;
         private List<Label> time_table, days;
         private bool scroll;
-
+        /*
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (scroll)
@@ -273,7 +218,7 @@ namespace introse
             else
                 scroll_down();
         }
-
+        */
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             //Console.WriteLine("ID: " + e.Node.Name);
@@ -316,108 +261,6 @@ namespace introse
         {
             form2 = new AddDefenseSchedule();
             form2.Show();
-        }
-
-        private void toolStripLabel2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripButton3_Click(object sender, EventArgs e)
-        {
-            String curr = this.table_interval.Text.Substring(23);
-            String put = "Table Interval Length: ";
-
-            if (intervals.IndexOf(curr) == 3)
-                return;
-            put += intervals.ElementAt(intervals.IndexOf(curr) + 1);
-
-            this.table_interval.Text = put;
-            topleft = new TimeSpan(8, 0, 0);
-            time_table_update();
-        }
-
-        private void toolStripButton4_Click(object sender, EventArgs e)
-        {
-            String curr = this.table_interval.Text.Substring(23);
-            String put = "Table Interval Length: ";
-
-            if (intervals.IndexOf(curr) == 0)
-                return;
-            put += intervals.ElementAt(intervals.IndexOf(curr) - 1);
-
-            this.table_interval.Text = put;
-            topleft = new TimeSpan(8, 0, 0);
-            time_table_update();
-        }
-
-        private void time_scroll_down_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void time_scroll_up_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void time_scroll_up_MouseDown(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void time_scroll_up_MouseUp(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void time_scroll_down_MouseDown(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void time_scroll_down_MouseUp(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void tableLayoutPanel1_Paint_1(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void toolStripLabel4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripButton5_Click(object sender, EventArgs e)
-        {
-            if (switch_sort.Text.Equals("View Clustered Groups"))
-            {
-                switch_sort.Text = "View Isolated Groups";
-                //treeView1.Visible = true;
-                //treeView2.Visible = false;
-                treeView2.Enabled = false;
-                treeView1.Enabled = true;
-                treeView2.Hide();
-                treeView1.Show();
-            }
-            else
-            {
-                switch_sort.Text = "View Clustered Groups";
-                //treeView1.Visible = false;
-                //treeView2.Visible = true;
-                treeView1.Enabled = false;
-                treeView2.Enabled = true;
-                treeView1.Hide();
-                treeView2.Show();
-            }
         }
     }
 }
