@@ -8,6 +8,14 @@ namespace introse
 {
     public class SchedulingDataManager
     {
+        private const int DEFWEEK_DAYS = 6;
+        private const int THSST1_DEF_DURATION_MINS = 60;
+        private const int THSST3_DEF_DURATION_MINS = 120;
+        private const int START_HOUR = 8 ;
+        private const int START_MIN = 0;
+        private const int LIMIT_HOUR = 21;
+        private const int LIMIT_MIN = 0;
+
         private DBce dbHandler;
 
         /*This will be used to draw the rectangles representing the defense schedules of
@@ -16,7 +24,7 @@ namespace introse
         private List<DefenseSchedule> clusterDefScheds;
 
         //This will be used to store the free times of the selected thesis group
-        private List<TimePeriod> selectedGroupFreeTimes;
+        private List<TimePeriod>[] selectedGroupFreeTimes;
 
         //This will be used to draw the rectangles representing the free slots of the selected thesis group.
         //private List<TimePeriod> selectedGroupFreeSlots;
@@ -24,12 +32,12 @@ namespace introse
         //Getters
 
         public List<DefenseSchedule> ClusterDefScheds { get { return clusterDefScheds; } }
-        public List<TimePeriod> SelectedGroupFreeTimes { get { return selectedGroupFreeTimes; } }
+        public List<TimePeriod>[] SelectedGroupFreeTimes { get { return selectedGroupFreeTimes; } }
 
         public SchedulingDataManager()
         {
             clusterDefScheds = new List<DefenseSchedule>();
-            selectedGroupFreeTimes = new List<TimePeriod>();
+            selectedGroupFreeTimes = new List<TimePeriod>[DEFWEEK_DAYS];
             dbHandler = new DBce();
         }
     
@@ -119,7 +127,7 @@ namespace introse
          */
         private DefenseSchedule GetDefSched(DateTime startDate, DateTime endDate, String thesisGroupID)
         {
-            String query = "SELECT defenseDateTime, place FROM defenseSchedule WHERE thesisGroupID = '" + thesisGroupID + "' AND defenseDateTime >='" + startDate.Date + "' AND defenseDateTime <='" + endDate.Date + "';";
+            String query = "SELECT defenseDateTime, place FROM defenseSchedule WHERE thesisGroupID = " + thesisGroupID + " AND defenseDateTime >='" + startDate.Date + "' AND defenseDateTime <='" + endDate.Date + "';";
         
             List<String>[] columns = dbHandler.Select(query, 2);
 
@@ -134,7 +142,7 @@ namespace introse
             DateTime endTime = startTime.AddMinutes(defDuration);
             String place = columns[1].ElementAt(0);
             String groupTitle;
-            query = "SELECT title from thesisGroup WHERE thesisGroupID = '" + thesisGroupID + "';";
+            query = "SELECT title from thesisGroup WHERE thesisGroupID = " + thesisGroupID + ";";
             groupTitle = dbHandler.Select(query, 1)[0].ElementAt(0);
 
             return new DefenseSchedule(startTime, endTime, place, groupTitle);
@@ -145,16 +153,12 @@ namespace introse
          */
         private int GetMinsDuration(String thesisGroupID)
         {
-            const int thsst1DefDurationInMins = 60;
-            const int thsst3DefDurationInMins = 120;
-
-
-            String query = "SELECT course from thesisGroup where thesisGroupID = '" + thesisGroupID + "';";
+            String query = "SELECT course from thesisGroup where thesisGroupID = " + thesisGroupID + ";";
             String course = dbHandler.Select(query, 1)[0].ElementAt(0);
             if (course.Equals("THSST-1"))
-                return thsst1DefDurationInMins;
+                return THSST1_DEF_DURATION_MINS;
             else if (course.Equals("THSST-3"))
-                return thsst3DefDurationInMins;
+                return THSST3_DEF_DURATION_MINS;
 
             return -1;
         }
@@ -163,47 +167,293 @@ namespace introse
          * a thesis group is selected, whether in tree view (for clusters) or listbox (for isolated groups).
          * The parameters are still to be changed.
          * */
-        public void RefreshSelectedGroupFreeTimes(DateTime startDate, DateTime endDate, int thesisGroupID)
+        public void RefreshSelectedGroupFreeTimes(DateTime startDate, DateTime endDate, String thesisGroupID)
         {
-            List<String> studentIDs = new List<String>();
-            List<String> panelistIDs = new List<String>();
-            List<String>[] columns;
+            List<TimePeriod>[] days = new List<TimePeriod>[DEFWEEK_DAYS];
+            AddBusyTimePeriods(thesisGroupID, days);
+            
+            for (int i = 0; i < DEFWEEK_DAYS; i++) 
+            {
+                //Console.WriteLine("Day " + i);
+                List<TimePeriod> mergedPeriods = new List<TimePeriod>();
+                List<TimePeriod> currDay = days[i];
+                int size = currDay.Count;
+                //Console.WriteLine("Before merging: Day" + i);
+                //DateTimeHelper.PrintTimePeriods(currDay);
+                if (size > 0) 
+                {
+                    //Console.WriteLine("Going to merge day:" + i);
+                    TimePeriod curr = currDay.ElementAt(0);
+                    bool isNewSet = false;
+                    for (int j = 1; j < size; j++)
+                    {
+                        //Console.Write("j: "+j+" ==== ");
+                      
+                            if (curr.IntersectsInclusive(currDay.ElementAt(j)))
+                            {
+                                //Console.WriteLine(curr+" intersects with " + currDay.ElementAt(j));
+                                curr = MergeTimePeriods(curr, currDay.ElementAt(j));
+                            }
+                            else
+                            {
+                                //Console.WriteLine("here with "+curr);
+                                mergedPeriods.Add(curr);
+                                curr = currDay.ElementAt(j);
+                            }
+                        
+                    }
+
+                    if (!isNewSet)
+                        mergedPeriods.Add(curr);
+
+                    //DateTimeHelper.PrintTimePeriods(mergedPeriods);
+                }
+
+                //Console.WriteLine("After merging: Day" + i);
+                //DateTimeHelper.PrintTimePeriods(mergedPeriods);
+                
+                DateTime currStart = new DateTime(2013,1,1, START_HOUR, START_MIN, 0 );
+                DateTime currEnd;
+                size = mergedPeriods.Count;
+                List<TimePeriod> currDayFreeSlots = new List<TimePeriod>();
+                for (int j = 0; j < size; j++) 
+                {
+                    currEnd = mergedPeriods.ElementAt(j).StartTime;
+                    
+                    //if (currStart != currEnd in terms of time only).
+                    if (currStart.TimeOfDay.CompareTo(currEnd.TimeOfDay)!=0) 
+                        currDayFreeSlots.Add(new TimePeriod(currStart, currEnd));
+                    
+                    currStart = mergedPeriods.ElementAt(j).EndTime;
+                }
+
+                //The following makes sure the free times end at 9pm.
+                
+
+                if(currStart.Hour < LIMIT_HOUR || currStart.Hour == LIMIT_HOUR && currStart.Minute < LIMIT_MIN)
+                {
+                    currDayFreeSlots.Add(new TimePeriod(currStart, new DateTime(2013, 1, 1, LIMIT_HOUR, LIMIT_MIN, 0)));
+                }
+
+                selectedGroupFreeTimes[i] = currDayFreeSlots;
+            }
+        }
+
+        //This method adds the busy time periods to the List<TimePeriod>[] representing the days in a def week.
+        private void AddBusyTimePeriods(String thesisGroupID, List<TimePeriod>[] days)
+        {
+            List<String> timeSlotIDs = new List<String>(); //Stored as string instead of int because when included in the select statement, it will become a string anyway.
+            List<String> eventIDs = new List<String>();
+            List<String>[] studentIDs;
+            List<String>[] panelistIDs;
+
             String query;
             int size;
 
             /*Start: 
-             * Initialize the studentIDs and panelistIDs belonging to this thesis group.
+             * Initialize the distinct timeslotIDs of students' and panelists' class schedules.
              * */
-            
-            query = "SELECT studentID FROM Student WHERE thesisGroupID = '" + thesisGroupID + "';";
 
-            columns = dbHandler.Select(query, 1);
-            size = columns[0].Count;
-
-            for (int i = 0; i < size; i++)
-                studentIDs.Add(columns[0].ElementAt(i));
-
-            query = "SELECT panelistID FROM PanelAssignment WHERE thesisGroupdID = '" + thesisGroupID + "';";
-            columns = dbHandler.Select(query, 1);
-            size = columns[0].Count;
+            query = "SELECT studentID FROM Student WHERE thesisGroupID = " + thesisGroupID + ";";
+            studentIDs = dbHandler.Select(query, 1);
+            size = studentIDs[0].Count;
 
             for (int i = 0; i < size; i++)
-                panelistIDs.Add(columns[0].ElementAt(i));
+            {
+                query = "SELECT timeslotID FROM student s, studentSchedule ss WHERE s.studentID = '" + studentIDs[0].ElementAt(i) + "' AND s.studentID = ss.studentID;";
+                AddUniqueTimeSlots(timeSlotIDs, dbHandler.Select(query, 1)[0]);
+                
+                query = "SELECT eventID from studentEventRecord WHERE studentID = '"+studentIDs[0].ElementAt(i)+"';";
+                AddUniqueTimeSlots(eventIDs, dbHandler.Select(query, 1)[0]);
+            }
 
+            query = "SELECT panelistID FROM PanelAssignment WHERE thesisGroupID = " + thesisGroupID + ";";
+            panelistIDs = dbHandler.Select(query, 1);
+            size = panelistIDs[0].Count;
+
+            for (int i = 0; i < size; i++)
+            {
+                query = "SELECT timeslotID FROM timeslot where panelistID = '" + panelistIDs[0].ElementAt(i) + "';";
+                AddUniqueTimeSlots(timeSlotIDs, dbHandler.Select(query, 1)[0]);
+
+                query = "SELECT eventID from PanelistEventRecord WHERE panelistID = '"+panelistIDs[0].ElementAt(i)+"';";
+                AddUniqueTimeSlots(eventIDs, dbHandler.Select(query, 1)[0]);
+            }
             /* End */
 
             /*Start:
-             * Gather all timeslots of these seven people, and place them inside a collection.
+             * 
              * */
+            days[0] = GetUniqueClassTimeSlots(timeSlotIDs, "M");
+            days[1] = GetUniqueClassTimeSlots(timeSlotIDs, "T");
+            days[2] = GetUniqueClassTimeSlots(timeSlotIDs, "W");
+            days[3] = GetUniqueClassTimeSlots(timeSlotIDs, "H");
+            days[4] = GetUniqueClassTimeSlots(timeSlotIDs, "F");
+            days[5] = GetUniqueClassTimeSlots(timeSlotIDs, "S");
 
+            List<TimePeriod>[] eventSlots = GetUniqueEventSlots(eventIDs);
+
+            for (int i = 0; i < 6; i++)
+            {
+                if (eventSlots[i] != null)
+                    days[i].AddRange(eventSlots[i]);
+
+                days[i].Sort();
+                //Console.WriteLine("after sorting: " + i);
+                //DateTimeHelper.PrintTimePeriods(days[i]);
+            }
+            /* End */
+        }
+
+        
+
+        //This method merges two intersecting timeperiods into one timeperiod to represent both.
+        private TimePeriod MergeTimePeriods(TimePeriod tp1, TimePeriod tp2) 
+        {
+            DateTime minStart;
+            DateTime maxEnd;
+
+            if(tp1.StartTime.TimeOfDay.CompareTo(tp2.StartTime.TimeOfDay)<=0)
+            //if (DateTimeHelper.CompareTimes(tp1.StartTime, tp2.StartTime) <= 0)
+                minStart = tp1.StartTime;
+            else
+                minStart = tp2.StartTime;
+
+            if(tp1.EndTime.TimeOfDay.CompareTo(tp2.EndTime.TimeOfDay) >= 0)
+            //if (DateTimeHelper.CompareTimes(tp1.EndTime, tp2.EndTime) >= 0)
+                maxEnd = tp1.EndTime;
+            else
+                maxEnd = tp2.EndTime;
+
+            return new TimePeriod(minStart, maxEnd);
+        }
+         
+        private List<TimePeriod>[] GetUniqueEventSlots(List<String> eventIDs)
+        {
+            int size = eventIDs.Count;
+            String query;
+            List<String>[] columns;
+
+            List<TimePeriod>[] busySlots = new List<TimePeriod>[DEFWEEK_DAYS];
+
+            for (int i = 0; i < DEFWEEK_DAYS; ++i) 
+                busySlots[i] = new List<TimePeriod>();
             
 
+            int currDay;
+            TimePeriod newTimePeriod;
 
-            /* End */
+            DateTime earliestTime = new DateTime(2013, 1, 1, START_HOUR, START_MIN, 0);
+            DateTime latestTime = new DateTime(2013, 1, 1, LIMIT_HOUR, LIMIT_MIN, 0);
+            
+            for(int i=0; i<size; i++)
+            {
+                query = "SELECT eventStart, eventEnd FROM Event WHERE eventID = "+eventIDs.ElementAt(i)+";";
+                columns = dbHandler.Select(query, 2);
+                DateTime eventStart = Convert.ToDateTime(columns[0].ElementAt(0));
+                DateTime eventEnd = Convert.ToDateTime(columns[1].ElementAt(0)); 
 
+                for(DateTime curr = eventStart ;curr.Date.CompareTo(eventEnd.Date) <= 0 ; curr = curr.AddDays(1))
+                {
+                    currDay = (int)curr.DayOfWeek - 1;
+                    
+                    if(currDay >= 0) //If not sunday, because sunday is never included.
+                    {
+                        newTimePeriod = null;
 
+                        int comparisonToStart = curr.Date.CompareTo(eventStart.Date);
+                        int comparisonToEnd = curr.Date.CompareTo(eventEnd.Date);
 
+                        if ( comparisonToStart == 0 && comparisonToEnd == 0)
+                            newTimePeriod = new TimePeriod(eventStart, eventEnd);
+                        else if (comparisonToStart == 0)
+                        {
+                            if(eventStart.TimeOfDay.CompareTo(latestTime.TimeOfDay) < 0)
+                                newTimePeriod = new TimePeriod(eventStart, latestTime);
+                        }
+                        else if (comparisonToEnd == 0)
+                        {
+                            int comparisonToLatest = eventEnd.TimeOfDay.CompareTo(latestTime.TimeOfDay);
+                            int comparisonToEarliest = eventEnd.TimeOfDay.CompareTo(earliestTime.TimeOfDay);
+                            if (comparisonToLatest < 0 && comparisonToEarliest > 0)
+                                newTimePeriod = new TimePeriod(earliestTime, eventEnd);
+                            else if(comparisonToLatest >= 0)
+                                newTimePeriod = new TimePeriod(earliestTime, latestTime);
+                        }
+                        else
+                            newTimePeriod = new TimePeriod(earliestTime, latestTime);
 
+                        if (newTimePeriod != null)
+                        {
+                            if (!busySlots[currDay].Contains(newTimePeriod))
+                                busySlots[currDay].Add(newTimePeriod);
+                        }
+                    }  
+                }
+            }
+
+            /*For debugging purposes*/
+            Console.WriteLine("Event busy slots:");
+            for (int i = 0; i < DEFWEEK_DAYS; i++) 
+            {
+                Console.WriteLine("Day:" + i);
+                Helper.PrintTimePeriods(busySlots[i]);
+            }
+            Console.WriteLine();
+            /*For debugging purposes*/
+            
+            return busySlots;
         }
+
+        private List<TimePeriod> GetUniqueClassTimeSlots(List<String> timeSlotIDs, String day) 
+        {
+            String query;
+            List<String>[] columns;
+            List<TimePeriod> busyTimeSlots = new List<TimePeriod>();
+            DateTime startTime;
+            DateTime endTime;
+            TimePeriod newSlot;
+            int size = timeSlotIDs.Count;
+
+            for (int i = 0; i < size; i++) 
+            {
+                query = "SELECT day, startTime, endTime FROM timeslot WHERE day = '" + day + "' AND  timeSlotID = '" + timeSlotIDs.ElementAt(i) + "';";
+                columns = dbHandler.Select(query, 3);
+                if (columns[0].Count > 0) 
+                {
+                    startTime = Convert.ToDateTime(columns[1].ElementAt(0));
+                    endTime = Convert.ToDateTime(columns[2].ElementAt(0));
+                    newSlot = new TimePeriod(startTime, endTime);
+                    if (!busyTimeSlots.Contains(newSlot))
+                    {
+                        /*
+                        Console.WriteLine("Added for "+day+": "+newSlot.StartTime+"-"+newSlot.EndTime);
+                        Console.WriteLine("The current list");
+                        DateTimeHelper.PrintTimePeriods(busyTimeSlots);
+                        */
+                        busyTimeSlots.Add(newSlot);
+                    }
+                }
+            }
+
+            return busyTimeSlots;
+        }
+
+        /* This method is called by RefreshSelectedGroupFreeTimes() to add new distinct timeslots to the list. 
+         * It is only a support method for RefreshSelectedGroupFreeTimes(). This is used both for class timeslots
+         * and event timeslots.
+         * */
+        private void AddUniqueTimeSlots(List<String> timeslotIDs, List<String> newSlots)
+        {
+            int numTimeslots = newSlots.Count;
+            for (int j = 0; j < numTimeslots; j++)
+            {
+                if (!timeslotIDs.Contains(newSlots.ElementAt(j)))
+                    timeslotIDs.Add(newSlots.ElementAt(j));
+            }
+        }
+
+       
+
     }
 }
