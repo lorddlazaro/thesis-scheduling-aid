@@ -252,49 +252,88 @@ namespace introse
         {
             List<String> timeSlotIDs = new List<String>(); //Stored as string instead of int because when included in the select statement, it will become a string anyway.
             List<String> eventIDs = new List<String>();
-            List<String>[] studentIDs;
-            List<String>[] panelistIDs;
+            List<String>studentIDs;
+            List<String> panelistIDs;
 
             String query;
             int size;
 
             /*Start: 
-             * Initialize the distinct timeslotIDs of students' and panelists' class schedules.
+             * Initialize the distinct timeslotIDs of students' class schedules.
              * */
 
             query = "SELECT studentID FROM Student WHERE thesisGroupID = " + thesisGroupID + ";";
-            studentIDs = dbHandler.Select(query, 1);
-            size = studentIDs[0].Count;
+            studentIDs = dbHandler.Select(query, 1)[0];
+            size = studentIDs.Count;
 
+            query = "SELECT distinct timeslotID FROM student s, studentSchedule ss WHERE s.studentID = ss.studentID AND (";
+            for (int i = 0; i < size; i++) 
+            {
+                query += " s.studentID = '" + studentIDs.ElementAt(i) + "'";
+
+                if (i < size - 1)
+                    query += " OR ";
+                else
+                    query += ");";
+            }
+       
+            AddUniqueTimeSlots(timeSlotIDs, dbHandler.Select(query, 1)[0]);
+
+            query = "SELECT distinct eventID FROM studentEventRecord WHERE ";
             for (int i = 0; i < size; i++)
             {
-                query = "SELECT timeslotID FROM student s, studentSchedule ss WHERE s.studentID = '" + studentIDs[0].ElementAt(i) + "' AND s.studentID = ss.studentID;";
-                AddUniqueTimeSlots(timeSlotIDs, dbHandler.Select(query, 1)[0]);
+                query += " studentID = '" + studentIDs.ElementAt(i) + "'";
 
-                query = "SELECT eventID from studentEventRecord WHERE studentID = '" + studentIDs[0].ElementAt(i) + "';";
-                AddUniqueTimeSlots(eventIDs, dbHandler.Select(query, 1)[0]);
+                if (i < size - 1)
+                    query += " OR ";
+                else
+                    query += ";";
             }
+      
+            AddUniqueTimeSlots(eventIDs, dbHandler.Select(query, 1)[0]);
+
+            /*End*/
+
+            /*Start: Initialize panelists' class shcedules' timeslotIDs*/ 
 
             query = "SELECT panelistID FROM PanelAssignment WHERE thesisGroupID = " + thesisGroupID + ";";
-            panelistIDs = dbHandler.Select(query, 1);
-            size = panelistIDs[0].Count;
+            panelistIDs = dbHandler.Select(query, 1)[0];
+            size = panelistIDs.Count;
 
-            for (int i = 0; i < size; i++)
+            query = "SELECT distinct timeslotID FROM timeslot WHERE ";
+
+            for (int i = 0; i < size; i++) 
             {
-                query = "SELECT timeslotID FROM timeslot where panelistID = '" + panelistIDs[0].ElementAt(i) + "';";
-                AddUniqueTimeSlots(timeSlotIDs, dbHandler.Select(query, 1)[0]);
+                query += " panelistID = '" + panelistIDs.ElementAt(i) + "' ";
 
-                query = "SELECT eventID from PanelistEventRecord WHERE panelistID = '" + panelistIDs[0].ElementAt(i) + "';";
-                AddUniqueTimeSlots(eventIDs, dbHandler.Select(query, 1)[0]);
+                if (i < size - 1)
+                    query += " OR ";
+                else
+                    query += ";";
             }
+
+            AddUniqueTimeSlots(timeSlotIDs, dbHandler.Select(query, 1)[0]);
+
+            query = "SELECT distinct eventID from PanelistEventRecord WHERE ";
+
+            for (int i = 0; i < size; i++) 
+            {
+                query += " panelistID = '" + panelistIDs.ElementAt(i) + "' ";
+
+                if (i < size - 1)
+                    query += " OR ";
+                else
+                    query += ";";
+            }
+            AddUniqueTimeSlots(eventIDs, dbHandler.Select(query, 1)[0]);
             /* End */
 
-            /*Start:
+            /*Start: 
              * 
              * */
             List<TimePeriod>[] classSlots = GetUniqueClassTimeSlots(timeSlotIDs);
-
             List<TimePeriod>[] eventSlots = GetUniqueEventSlots(eventIDs);
+            List<TimePeriod>[] defSlots = GetUniqueDefSlots(panelistIDs);
 
             for (int i = 0; i < 6; i++)
             {
@@ -304,6 +343,9 @@ namespace introse
                 if (eventSlots[i] != null)
                     days[i].AddRange(eventSlots[i]);
 
+                if (defSlots[i] != null)
+                    days[i].AddRange(defSlots[i]);
+
                 days[i].Sort();
                 //Console.WriteLine("after sorting: " + i);
                 //DateTimeHelper.PrintTimePeriods(days[i]);
@@ -311,6 +353,7 @@ namespace introse
             /* End */
         }
 
+   
         //This method merges two intersecting timeperiods into one timeperiod to represent both.
         private TimePeriod MergeTimePeriods(TimePeriod tp1, TimePeriod tp2)
         {
@@ -419,31 +462,117 @@ namespace introse
             TimePeriod newSlot;
             int currDay;
             int size = timeSlotIDs.Count;
+            query = "SELECT distinct day, startTime, endtime FROM timeslot WHERE ";
 
-
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++) 
             {
-                query = "SELECT day, startTime, endTime FROM timeslot WHERE timeSlotID = '" + timeSlotIDs.ElementAt(i) + "';";
-                columns = dbHandler.Select(query, 3);
-                if (columns[0].Count > 0)
+                query += "timeSlotID = " + timeSlotIDs.ElementAt(i)+" ";
+                if (i < size - 1)
+                    query += " OR ";
+                else
+                    query += ";";
+            }
+
+            columns = dbHandler.Select(query, 3);
+            size = columns[0].Count;
+            for (int i = 0; i < size; i++) 
+            {
+                currDay = ConvertToInt(columns[0].ElementAt(i));
+                startTime = Convert.ToDateTime(columns[1].ElementAt(i));
+                endTime = Convert.ToDateTime(columns[2].ElementAt(i));
+                newSlot = new TimePeriod(startTime, endTime);
+                if (!busySlots[currDay].Contains(newSlot))
                 {
-                    currDay = ConvertToInt(columns[0].ElementAt(0));
-                    startTime = Convert.ToDateTime(columns[1].ElementAt(0));
-                    endTime = Convert.ToDateTime(columns[2].ElementAt(0));
-                    newSlot = new TimePeriod(startTime, endTime);
-                    if (!busySlots[currDay].Contains(newSlot))
-                    {
-                        /*
-                        Console.WriteLine("Added for "+day+": "+newSlot.StartTime+"-"+newSlot.EndTime);
-                        Console.WriteLine("The current list");
-                        DateTimeHelper.PrintTimePeriods(busyTimeSlots);
-                        */
-                        busySlots[currDay].Add(newSlot);
-                    }
+                    /*
+                    Console.WriteLine("Added for "+day+": "+newSlot.StartTime+"-"+newSlot.EndTime);
+                    Console.WriteLine("The current list");
+                    DateTimeHelper.PrintTimePeriods(busyTimeSlots);
+                    */
+                    busySlots[currDay].Add(newSlot);
                 }
             }
+
             return busySlots;
         }
+
+        private List<TimePeriod>[] GetUniqueDefSlots(List<String> panelistIDs)
+        {
+            String query = "SELECT defenseDateTime";
+            int size = panelistIDs.Count;
+            List<String> defDateTimes;
+            List<String> courses;
+            List<String> groupIDs;
+            List<TimePeriod>[] busySlots = new List<TimePeriod>[DEFWEEK_DAYS];
+            InitListTimePeriodArray(busySlots);
+
+            if(size == 0)
+                return busySlots;
+
+            /*Select all distinct thesis group ID's having the panelists in the list*/
+            query = "SELECT distinct thesisGroupID from PanelAssignment WHERE ";
+            for (int i = 0; i < size; i++) 
+            {
+               query+= " panelistId='" + panelistIDs.ElementAt(i) + "' ";
+                
+                if(i == size-1)
+                    query+=";";
+                else
+                    query+=" OR ";
+            }
+        
+            groupIDs = dbHandler.Select(query, 1)[0];
+            size = groupIDs.Count;
+            if(size == 0)
+                return busySlots;
+            /*end*/
+
+            /*Select all distinct defenseId's that these thesis groups have*/
+
+            query = "Select distinct defenseDateTime, course FROM DefenseSchedule ds, ThesisGroup tg WHERE ds.thesisGroupID = tg.thesisGroupID AND ( ";
+            for (int j = 0; j < size; j++) 
+            {
+                query += " tg.thesisGroupID = " + groupIDs.ElementAt(j);
+
+                if (j == groupIDs.Count - 1)
+                    query += ");";
+                else
+                    query += " OR ";
+            }
+      
+            List<String>[] columns = dbHandler.Select(query, 2);
+            defDateTimes = columns[0];
+            courses = columns[1];
+
+            size = defDateTimes.Count;
+            DateTime start;
+            DateTime end;
+            String course;
+            for (int i = 0; i < size; i++) 
+            {
+                start= Convert.ToDateTime(defDateTimes.ElementAt(i));
+                course = courses.ElementAt(i);
+                if (course.Equals("THSST-1"))
+                    end = start.AddMinutes(THSST1_DEF_DURATION_MINS);
+                else
+                    end = start.AddMinutes(THSST3_DEF_DURATION_MINS);
+                //end = start.AddMinutes(GetMinsDuration(courses.ElementAt(i)));
+                if(start.DayOfWeek > 0)
+                    busySlots[(int)start.DayOfWeek - 1].Add(new TimePeriod(start, end));
+            }
+
+            return busySlots;
+        }
+
+        /*
+        private int GetMinsDuration(String course) 
+        {
+            if (course.Equals("THSST-1"))
+                return THSST1_DEF_DURATION_MINS;
+            else if(course.Equals("THSST-3"))
+                return THSST3_DEF_DURATION_MINS
+            return -1;
+        }
+         * */
 
         private int ConvertToInt(String day)
         {
@@ -472,7 +601,7 @@ namespace introse
             int numTimeslots = newSlots.Count;
             for (int j = 0; j < numTimeslots; j++)
             {
-                if (!timeslotIDs.Contains(newSlots.ElementAt(j)))
+                if (!timeslotIDs.Contains(newSlots.ElementAt(j))) //potentially not needed since all calls to this pass slots with distinct members
                     timeslotIDs.Add(newSlots.ElementAt(j));
             }
         }
