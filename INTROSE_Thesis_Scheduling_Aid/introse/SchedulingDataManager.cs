@@ -163,6 +163,12 @@ namespace introse
             return -1;
         }
 
+        private void InitListTimePeriodArray(List<TimePeriod>[] list) 
+        {
+            for (int i = 0; i < DEFWEEK_DAYS; i++)
+                list[i] = new List<TimePeriod>();
+        }
+
         /* This method will be called by the UI to refresh selectedGroupFreeSlots when
          * a thesis group is selected, whether in tree view (for clusters) or listbox (for isolated groups).
          * The parameters are still to be changed.
@@ -170,6 +176,7 @@ namespace introse
         public void RefreshSelectedGroupFreeTimes(DateTime startDate, DateTime endDate, String thesisGroupID)
         {
             List<TimePeriod>[] days = new List<TimePeriod>[DEFWEEK_DAYS];
+            InitListTimePeriodArray(days);
             AddBusyTimePeriods(thesisGroupID, days);
             
             for (int i = 0; i < DEFWEEK_DAYS; i++) 
@@ -284,17 +291,15 @@ namespace introse
             /*Start:
              * 
              * */
-            days[0] = GetUniqueClassTimeSlots(timeSlotIDs, "M");
-            days[1] = GetUniqueClassTimeSlots(timeSlotIDs, "T");
-            days[2] = GetUniqueClassTimeSlots(timeSlotIDs, "W");
-            days[3] = GetUniqueClassTimeSlots(timeSlotIDs, "H");
-            days[4] = GetUniqueClassTimeSlots(timeSlotIDs, "F");
-            days[5] = GetUniqueClassTimeSlots(timeSlotIDs, "S");
-
+            List<TimePeriod>[] classSlots = GetUniqueClassTimeSlots(timeSlotIDs);
+            
             List<TimePeriod>[] eventSlots = GetUniqueEventSlots(eventIDs);
 
             for (int i = 0; i < 6; i++)
             {
+                if (classSlots[i] != null)
+                    days[i].AddRange(classSlots[i]);
+
                 if (eventSlots[i] != null)
                     days[i].AddRange(eventSlots[i]);
 
@@ -304,8 +309,6 @@ namespace introse
             }
             /* End */
         }
-
-        
 
         //This method merges two intersecting timeperiods into one timeperiod to represent both.
         private TimePeriod MergeTimePeriods(TimePeriod tp1, TimePeriod tp2) 
@@ -335,11 +338,8 @@ namespace introse
             List<String>[] columns;
 
             List<TimePeriod>[] busySlots = new List<TimePeriod>[DEFWEEK_DAYS];
-
-            for (int i = 0; i < DEFWEEK_DAYS; ++i) 
-                busySlots[i] = new List<TimePeriod>();
+            InitListTimePeriodArray(busySlots);
             
-
             int currDay;
             TimePeriod newTimePeriod;
 
@@ -392,7 +392,7 @@ namespace introse
                 }
             }
 
-            /*For debugging purposes*/
+            /*For debugging purposes
             Console.WriteLine("Event busy slots:");
             for (int i = 0; i < DEFWEEK_DAYS; i++) 
             {
@@ -405,38 +405,61 @@ namespace introse
             return busySlots;
         }
 
-        private List<TimePeriod> GetUniqueClassTimeSlots(List<String> timeSlotIDs, String day) 
+        private List<TimePeriod>[] GetUniqueClassTimeSlots(List<String> timeSlotIDs) 
         {
             String query;
             List<String>[] columns;
-            List<TimePeriod> busyTimeSlots = new List<TimePeriod>();
+            List<TimePeriod>[] busySlots = new List<TimePeriod>[DEFWEEK_DAYS];
+
+            InitListTimePeriodArray(busySlots);
+
             DateTime startTime;
             DateTime endTime;
             TimePeriod newSlot;
+            int currDay;
             int size = timeSlotIDs.Count;
 
-            for (int i = 0; i < size; i++) 
+            
+            for (int i = 0; i < size; i++)
             {
-                query = "SELECT day, startTime, endTime FROM timeslot WHERE day = '" + day + "' AND  timeSlotID = '" + timeSlotIDs.ElementAt(i) + "';";
+                query = "SELECT day, startTime, endTime FROM timeslot WHERE timeSlotID = '" + timeSlotIDs.ElementAt(i) + "';";
                 columns = dbHandler.Select(query, 3);
-                if (columns[0].Count > 0) 
+                if (columns[0].Count > 0)
                 {
+                    currDay = ConvertToInt(columns[0].ElementAt(0));
                     startTime = Convert.ToDateTime(columns[1].ElementAt(0));
                     endTime = Convert.ToDateTime(columns[2].ElementAt(0));
                     newSlot = new TimePeriod(startTime, endTime);
-                    if (!busyTimeSlots.Contains(newSlot))
+                    if (!busySlots[currDay].Contains(newSlot))
                     {
                         /*
                         Console.WriteLine("Added for "+day+": "+newSlot.StartTime+"-"+newSlot.EndTime);
                         Console.WriteLine("The current list");
                         DateTimeHelper.PrintTimePeriods(busyTimeSlots);
                         */
-                        busyTimeSlots.Add(newSlot);
+                        busySlots[currDay].Add(newSlot);
                     }
                 }
             }
+            return busySlots;
+        }
 
-            return busyTimeSlots;
+        private int ConvertToInt(String day) 
+        {
+            if(day.Equals("M"))
+                return 0;
+            if (day.Equals("T"))
+                return 1;
+            if (day.Equals("W"))
+                return 2;
+            if (day.Equals("H"))
+                return 3;
+            if (day.Equals("F"))
+                return 4;
+            if (day.Equals("S"))
+                return 5;
+
+            return -1;
         }
 
         /* This method is called by RefreshSelectedGroupFreeTimes() to add new distinct timeslots to the list. 
