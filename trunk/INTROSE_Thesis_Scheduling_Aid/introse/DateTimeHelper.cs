@@ -33,5 +33,14 @@ namespace introse
             return false;
         }
 
+        //Just for debugging purposes
+        public static void PrintTimePeriods(List<TimePeriod> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                Console.WriteLine(list.ElementAt(i).StartTime + "-" + list.ElementAt(i).EndTime);
+            }
+        }
+
     }
 }
