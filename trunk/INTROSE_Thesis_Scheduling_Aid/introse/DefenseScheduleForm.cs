@@ -28,21 +28,24 @@ namespace introse
         {
             InitializeComponent();
         }
-        public DefenseScheduleForm(SchedulingDataManager sdm, Form1 form)
+        public DefenseScheduleForm(Form1 form, string thesisgroupid)
         {
-            this.sdm = sdm;
-            this.form=form;
+            this.sdm = form.Sdm;
+            this.form= form;
             InitializeComponent();
-            initData();
+            initData(thesisgroupid);
         }
 
         // Initialization and Updating
 
         // probably finished
-        private void initData() {
+        private void initData(string isolatedThesisTitle) {
             dbHandler = new DBce();
 
-            fillLists();
+            if (isolatedThesisTitle.Length==0)
+                fillLists();
+            else
+                fillLists(isolatedThesisTitle);
             if(unassignedGroups.Count() !=0)
                 fillComboBox();
 
@@ -106,7 +109,47 @@ namespace introse
                 unassignedGroups.Add(new Record(list[0].ElementAt(i), list[1].ElementAt(i), list[2].ElementAt(i)));
 
             if (records.Count > 0)
+            {
                 currentRecordNo.Text = "1";
+                form.ChangeSelectedGroup(records.ElementAt(0).Thesisgroupid);
+            }
+            else
+                currentRecordNo.Text = "0";
+        }
+
+        private void fillLists(string thesisTitle)
+        {
+            // Fill Existing Records
+            records = new List<Record>();
+            unassignedGroups = new List<Record>();
+            List<string>[] list;
+            string assignedgroups = "";
+
+            string query = "select d.defenseid, t.thesisgroupid, t.title, t.course, d.place, d.defensedatetime ";
+            query += "from defenseschedule d, thesisgroup t where d.thesisgroupid = t.thesisgroupid and t.thesisgroupid = " + thesisTitle + ";";
+            list = dbHandler.Select(query, 6);
+
+            if(list[0].Count()!=0){
+                records.Add(new Record(list[0].ElementAt(0), list[1].ElementAt(0), list[2].ElementAt(0), list[3].ElementAt(0), list[4].ElementAt(0), list[5].ElementAt(0).Split(' ')[0], list[5].ElementAt(0).Split(' ')[1] + " " + list[5].ElementAt(0).Split(' ')[2]));
+                assignedgroups = "'" + list[1].ElementAt(0) + "'";
+            }
+
+            //Fill Non-existing Records
+            query = "select thesisgroupid, title, course from thesisgroup where thesisgroupid =" + thesisTitle;
+
+            if (assignedgroups.Length != 0)
+                query += " and thesisgroupid not in (" + assignedgroups + ")";
+
+            list = dbHandler.Select(query, 3);
+
+            if (list[0].Count() != 0)
+                unassignedGroups.Add(new Record(list[0].ElementAt(0), list[1].ElementAt(0), list[2].ElementAt(0)));
+
+            if (records.Count > 0)
+            {
+                currentRecordNo.Text = "1";
+                form.ChangeSelectedGroup(records.ElementAt(0).Thesisgroupid);
+            }
             else
                 currentRecordNo.Text = "0";
         }
@@ -372,27 +415,32 @@ namespace introse
             if (isInputValid() && MessageBox.Show("Confirm save?","Saving record",MessageBoxButtons.YesNo,MessageBoxIcon.Question)==DialogResult.Yes) {
                 if (addMode)
                 {
-                    thesisTitleTextBox.Visible = true;
-                    thesisTitleComboBox.Visible = false;
-                    addMode = false;
+                    if (thesisTitleComboBox.Text.Length != 0)
+                    {
+                        thesisTitleTextBox.Visible = true;
+                        thesisTitleComboBox.Visible = false;
+                        addMode = false;
 
-                    Record record = null;
-                    for (int i = 0; i < unassignedGroups.Count(); i++)
-                        if (thesisTitleComboBox.Text == unassignedGroups.ElementAt(i).Title)
-                        {
-                            record = unassignedGroups.ElementAt(i);
-                            records.Add(record);
-                            unassignedGroups.RemoveAt(i);
-                            break;
-                        }
+                        Record record = null;
+                        for (int i = 0; i < unassignedGroups.Count(); i++)
+                            if (thesisTitleComboBox.Text == unassignedGroups.ElementAt(i).Title)
+                            {
+                                record = unassignedGroups.ElementAt(i);
+                                records.Add(record);
+                                unassignedGroups.RemoveAt(i);
+                                break;
+                            }
 
-                    record.Date = defenseDatePicker.Value.Day+"/"+defenseDatePicker.Value.Month+"/"+defenseDatePicker.Value.Year;
-                    record.Time = string.Format("{0:HH:mm:ss tt}", defenseTimePicker.Value);
-                    record.Place = placeTextBox.Text;
-                    Console.WriteLine("argh "+record.Time);
-   
-                    dbHandler.Insert("insert into defenseschedule (defensedatetime,place,thesisgroupid) values('" + record.Date+" "+record.Time + "','"+record.Place+"','" +record.Thesisgroupid+ "');");
-                    record.Defenseid = dbHandler.Select("select defenseid from defenseschedule where thesisgroupid =" + record.Thesisgroupid+";", 1)[0].ElementAt(0);
+                        record.Date = defenseDatePicker.Value.Day + "/" + defenseDatePicker.Value.Month + "/" + defenseDatePicker.Value.Year;
+                        record.Time = string.Format("{0:HH:mm:ss tt}", defenseTimePicker.Value);
+                        record.Place = placeTextBox.Text;
+                        Console.WriteLine("argh " + record.Time);
+
+                        dbHandler.Insert("insert into defenseschedule (defensedatetime,place,thesisgroupid) values('" + record.Date + " " + record.Time + "','" + record.Place + "','" + record.Thesisgroupid + "');");
+                        record.Defenseid = dbHandler.Select("select defenseid from defenseschedule where thesisgroupid =" + record.Thesisgroupid + ";", 1)[0].ElementAt(0);
+                    }
+                    else
+                        MessageBox.Show("Error: No thesis group selected", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else 
                 {
@@ -421,7 +469,7 @@ namespace introse
 
             try
             {
-                form.childClick(records.ElementAt(text - 1).Thesisgroupid);
+                form.ChangeSelectedGroup(records.ElementAt(text - 1).Thesisgroupid);
             }
             catch (Exception ex) { }
            
@@ -446,7 +494,7 @@ namespace introse
                 {
                     courseTextBox.Text = unassignedGroups.ElementAt(i).Course;
                     thesisTitleTextBox.Text = thesisTitleComboBox.SelectedText;
-                    form.childClick(unassignedGroups.ElementAt(i).Thesisgroupid);
+                    form.ChangeSelectedGroup(unassignedGroups.ElementAt(i).Thesisgroupid);
                     break;
                 }
 
