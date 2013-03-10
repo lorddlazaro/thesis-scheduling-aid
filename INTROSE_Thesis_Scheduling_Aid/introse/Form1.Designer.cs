@@ -53,6 +53,7 @@
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.selectedGrpLabel = new System.Windows.Forms.Label();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -64,6 +65,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.selectedGrpLabel);
             this.tabPage1.Controls.Add(this.defenseweek_start);
             this.tabPage1.Controls.Add(this.splitContainer1);
             this.tabPage1.Controls.Add(this.toolStrip1);
@@ -489,6 +491,15 @@
             this.tabPage3.Text = "Thesis Groups";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // selectedGrpLabel
+            // 
+            this.selectedGrpLabel.AutoSize = true;
+            this.selectedGrpLabel.Location = new System.Drawing.Point(355, 10);
+            this.selectedGrpLabel.Name = "selectedGrpLabel";
+            this.selectedGrpLabel.Size = new System.Drawing.Size(52, 13);
+            this.selectedGrpLabel.TabIndex = 12;
+            this.selectedGrpLabel.Text = "Selected:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -536,6 +547,7 @@
         private System.Windows.Forms.DateTimePicker defenseweek_start;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.Label selectedGrpLabel;
 
 
     }

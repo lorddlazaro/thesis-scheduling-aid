@@ -15,14 +15,13 @@ namespace introse
         DBce db = new DBce();
         SchedulingDataManager sdm = new SchedulingDataManager();
         String currPanelistID; //To keep track of which cluster is currently selected.
-        DefenseScheduleForm form2;
-        //AddThesisGroup form3;
+        String currThesisGroupID;
+        AddDefenseSchedule form2;
+        AddThesisGroup form3;
 
         private TimeSpan topleft;
         private List<String> intervals, day_names;
         private List<Label> time_table, days;
-
-        public string CurrPanelistID { get { return currPanelistID; } }
 
         public Form1()
         {
@@ -35,6 +34,7 @@ namespace introse
         private void init() 
         {
             currPanelistID = "";
+            currThesisGroupID = "";
             intervals = new List<String>();
             intervals.Add("5min");
             intervals.Add("10min");
@@ -128,7 +128,7 @@ namespace introse
                     ypos = a.Hours * 120 + a.Minutes * 2;
 
                     //rectangle color
-                    e.Graphics.FillRectangle(Brushes.LightPink, xpos+1, ypos+1, width-1, height);
+                    e.Graphics.FillRectangle(Brushes.Green, xpos+1, ypos+1, width-1, height);
                     // rectangle borders
                     e.Graphics.DrawRectangle(new Pen(Color.Black), xpos, ypos + 1, width, height);
                 }
@@ -163,6 +163,7 @@ namespace introse
                 switch_sort.Text = "View Isolated Groups";
                 treeView2.Hide();
                 treeView1.Show();
+                
             }
             else
             {
@@ -174,31 +175,34 @@ namespace introse
 
         private void defenseweek_start_ValueChanged(object sender, EventArgs e)
         {
-            if (defenseweek_start.Value.DayOfWeek.ToString() == "Sunday")
+            if (defenseweek_start.Value.DayOfWeek.ToString().CompareTo("Sunday") != 0)
                 defenseweek_start.Value = defenseweek_start.Value.AddDays(1);
-
-            DateTime curr = new DateTime(defenseweek_start.Value.Year, defenseweek_start.Value.Month, defenseweek_start.Value.Day);
-
-            for (int i = 0; i < 6; i++, curr = curr.AddDays(1))
+            else 
             {
-                if (curr.DayOfWeek.ToString() == "Sunday")
-                    curr = curr.AddDays(1);
-                days.ElementAt(i).Text = curr.DayOfWeek.ToString() + "\n" + curr.ToString().Split(' ')[0];
-            }
+                DateTime curr = new DateTime(defenseweek_start.Value.Year, defenseweek_start.Value.Month, defenseweek_start.Value.Day);
 
-            if (!currPanelistID.Equals("")) 
-            {
+                for (int i = 0; i < 6; i++, curr = curr.AddDays(1))
+                {
+                    if (curr.DayOfWeek.ToString().CompareTo("Sunday") == 0)
+                        curr = curr.AddDays(1);
+                    days.ElementAt(i).Text = curr.DayOfWeek.ToString() + "\n" + curr.ToString().Split(' ')[0];
+                }
+
                 DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
                 DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
-                sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
+                if (!currPanelistID.Equals(""))
+                    sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
+                else if (!currThesisGroupID.Equals(""))
+                    ChangeSelectedGroup(currThesisGroupID);
+
+                tableLayoutPanel1.Refresh();
             }
-          
-            tableLayoutPanel1.Refresh();
+           
         }
         
         private TimeSpan getInterval()
         {
-                    return new TimeSpan(0, 5, 0);
+            return new TimeSpan(0, 5, 0);
         }
 
         private void time_table_update()
@@ -224,9 +228,7 @@ namespace introse
                 DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
                 DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
                 currPanelistID = e.Node.Name;
-
-                form2 = new DefenseScheduleForm(sdm, this);
-                form2.TopMost = true;
+                currThesisGroupID = "";
 
                 sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
                 if (sdm.ClusterDefScheds.Count > 0)
@@ -235,55 +237,46 @@ namespace introse
             else if (e.Node.Level == 1)
             {
                 currPanelistID = "";
-                DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
-                DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
-
-                sdm.RefreshSelectedGroupFreeTimes(start, end, e.Node.Name);
-
-                for (int currDay = 0; currDay < 6; currDay++) 
-                {
-                    Console.WriteLine("Day: "+currDay);
-                    for (int i = 0; i < sdm.SelectedGroupFreeTimes[currDay].Count; i++)
-                        Console.WriteLine(sdm.SelectedGroupFreeTimes[currDay].ElementAt(i));
-                }
-
-
+                ChangeSelectedGroup(e.Node.Name);
                 tableLayoutPanel1.Refresh();
             }
         }
+        
+        private void treeView2_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            currPanelistID = "";
+            ChangeSelectedGroup(e.Node.Name);
+        }
 
-        public void childClick(string thesisgroupid) {
+        private void ChangeSelectedGroup(String newThesisGroupID) 
+        {
+            currThesisGroupID = newThesisGroupID;
+            selectedGrpLabel.Text = "Selected: " + sdm.GetGroupInfo(currThesisGroupID);
+
             DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
             DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
+            
+            sdm.RefreshSelectedGroupFreeTimes(start, end, currThesisGroupID);
 
-            sdm.RefreshSelectedGroupFreeTimes(start, end, thesisgroupid);
-
+            /*For debugging purposes*/
             for (int currDay = 0; currDay < 6; currDay++)
             {
                 Console.WriteLine("Day: " + currDay);
                 for (int i = 0; i < sdm.SelectedGroupFreeTimes[currDay].Count; i++)
                     Console.WriteLine(sdm.SelectedGroupFreeTimes[currDay].ElementAt(i));
             }
-
-
-            tableLayoutPanel1.Refresh();
-        }
-        
-        private void treeView2_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            Console.WriteLine("ID: " + e.Node.Name);
-            Console.WriteLine(e.Node);
+            /*For debugging purposes*/
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            //form3 = new AddThesisGroup();
-            //form3.Show();
+            form3 = new AddThesisGroup();
+            form3.Show();
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            form2 = new DefenseScheduleForm();
+            form2 = new AddDefenseSchedule();
             form2.Show();
         }
 
