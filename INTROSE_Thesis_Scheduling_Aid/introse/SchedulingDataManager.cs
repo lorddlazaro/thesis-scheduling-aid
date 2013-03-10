@@ -269,15 +269,15 @@ namespace introse
             if (size == 0)
                 return;
 
-            query = "SELECT distinct timeslotID FROM student s, studentSchedule ss WHERE s.studentID = ss.studentID AND (";
+            query = "SELECT distinct timeslotID FROM  studentSchedule  WHERE ";
             for (int i = 0; i < size; i++) 
             {
-                query += " s.studentID = '" + studentIDs.ElementAt(i) + "'";
+                query += " studentID = '" + studentIDs.ElementAt(i) + "'";
 
                 if (i < size - 1)
                     query += " OR ";
                 else
-                    query += ");";
+                    query += ";";
             }
        
             
@@ -409,7 +409,7 @@ namespace introse
                     {
                         currDay = (int)curr.DayOfWeek - 1;
 
-                        if (currDay >= 0) //If not sunday, because sunday is never included.
+                        if (DateTimeHelper.IsBetweenInclusive(curr, startDate, endDate) && currDay >= 0) //If not sunday, because sunday is never included.
                         {
                             newTimePeriod = null;
 
@@ -618,7 +618,16 @@ namespace introse
             }
         }
 
+        public String GetGroupInfo(String thesisGroupID) 
+        {
+            String query = "SELECT section, course, title from ThesisGroup WHERE thesisGroupID = '" + thesisGroupID + "';";
+            List<String>[] columns = dbHandler.Select(query, 3);
+            if(columns[0].Count > 0)
+                return columns[0].ElementAt(0) + "-" + columns[1].ElementAt(0) + ": " + columns[2].ElementAt(0);
+            return "";
+        }
 
+     
 
     }
 }
