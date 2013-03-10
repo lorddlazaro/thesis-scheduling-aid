@@ -114,6 +114,7 @@ namespace introse
             {
                 currentRecordNo.Text = "1";
                 form.ChangeSelectedGroup(form.Start, form.End, records.ElementAt(0).Thesisgroupid);
+                form.tableRefresh();
             }
             else
                 currentRecordNo.Text = "0";
@@ -151,6 +152,7 @@ namespace introse
             {
                 currentRecordNo.Text = "1";
                 form.ChangeSelectedGroup(form.Start, form.End, records.ElementAt(0).Thesisgroupid);
+                form.tableRefresh();
             }
             else
                 currentRecordNo.Text = "0";
@@ -473,6 +475,7 @@ namespace introse
             if (text > 0 && text <= records.Count())
             {
                 form.ChangeSelectedGroup(form.Start, form.End, records.ElementAt(text - 1).Thesisgroupid);
+                form.tableRefresh();
                 deleteButton.Enabled = true;
                 if(!addMode)
                     currRecord = records.ElementAt(text - 1);
@@ -493,6 +496,7 @@ namespace introse
                     courseTextBox.Text = unassignedGroups.ElementAt(i).Course;
                     thesisTitleTextBox.Text = thesisTitleComboBox.SelectedText;
                     form.ChangeSelectedGroup(form.Start, form.End,unassignedGroups.ElementAt(i).Thesisgroupid);
+                    form.tableRefresh();
                     break;
                 }
 
