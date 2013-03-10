@@ -178,7 +178,7 @@ namespace introse
         {
             List<TimePeriod>[] days = new List<TimePeriod>[DEFWEEK_DAYS];
             InitListTimePeriodArray(days);
-            AddBusyTimePeriods(thesisGroupID, days);
+            AddBusyTimePeriods(thesisGroupID, startDate, endDate, days);
 
             for (int i = 0; i < DEFWEEK_DAYS; i++)
             {
@@ -248,7 +248,7 @@ namespace introse
         }
 
         //This method adds the busy time periods to the List<TimePeriod>[] representing the days in a def week.
-        private void AddBusyTimePeriods(String thesisGroupID, List<TimePeriod>[] days)
+        private void AddBusyTimePeriods(String thesisGroupID, DateTime startDate, DateTime endDate, List<TimePeriod>[] days)
         {
             List<String> timeSlotIDs = new List<String>(); //Stored as string instead of int because when included in the select statement, it will become a string anyway.
             List<String> eventIDs = new List<String>();
@@ -338,7 +338,7 @@ namespace introse
              * 
              * */
             List<TimePeriod>[] classSlots = GetUniqueClassTimeSlots(timeSlotIDs);
-            List<TimePeriod>[] eventSlots = GetUniqueEventSlots(eventIDs);
+            List<TimePeriod>[] eventSlots = GetUniqueEventSlots(eventIDs, startDate, endDate);
             List<TimePeriod>[] defSlots = GetUniqueDefSlots(panelistIDs);
 
             for (int i = 0; i < 6; i++)
@@ -381,7 +381,7 @@ namespace introse
             return new TimePeriod(minStart, maxEnd);
         }
 
-        private List<TimePeriod>[] GetUniqueEventSlots(List<String> eventIDs)
+        private List<TimePeriod>[] GetUniqueEventSlots(List<String> eventIDs, DateTime startDate, DateTime endDate)
         {
             int size = eventIDs.Count;
             String query;
@@ -403,40 +403,43 @@ namespace introse
                 DateTime eventStart = Convert.ToDateTime(columns[0].ElementAt(0));
                 DateTime eventEnd = Convert.ToDateTime(columns[1].ElementAt(0));
 
-                for (DateTime curr = eventStart; curr.Date.CompareTo(eventEnd.Date) <= 0; curr = curr.AddDays(1))
+                if (DateTimeHelper.DatesIntersectInclusive(eventStart, eventEnd, startDate, endDate)) 
                 {
-                    currDay = (int)curr.DayOfWeek - 1;
-
-                    if (currDay >= 0) //If not sunday, because sunday is never included.
+                    for (DateTime curr = eventStart; curr.Date.CompareTo(eventEnd.Date) <= 0; curr = curr.AddDays(1))
                     {
-                        newTimePeriod = null;
+                        currDay = (int)curr.DayOfWeek - 1;
 
-                        int comparisonToStart = curr.Date.CompareTo(eventStart.Date);
-                        int comparisonToEnd = curr.Date.CompareTo(eventEnd.Date);
+                        if (currDay >= 0) //If not sunday, because sunday is never included.
+                        {
+                            newTimePeriod = null;
 
-                        if (comparisonToStart == 0 && comparisonToEnd == 0)
-                            newTimePeriod = new TimePeriod(eventStart, eventEnd);
-                        else if (comparisonToStart == 0)
-                        {
-                            if (eventStart.TimeOfDay.CompareTo(latestTime.TimeOfDay) < 0)
-                                newTimePeriod = new TimePeriod(eventStart, latestTime);
-                        }
-                        else if (comparisonToEnd == 0)
-                        {
-                            int comparisonToLatest = eventEnd.TimeOfDay.CompareTo(latestTime.TimeOfDay);
-                            int comparisonToEarliest = eventEnd.TimeOfDay.CompareTo(earliestTime.TimeOfDay);
-                            if (comparisonToLatest < 0 && comparisonToEarliest > 0)
-                                newTimePeriod = new TimePeriod(earliestTime, eventEnd);
-                            else if (comparisonToLatest >= 0)
+                            int comparisonToStart = curr.Date.CompareTo(eventStart.Date);
+                            int comparisonToEnd = curr.Date.CompareTo(eventEnd.Date);
+
+                            if (comparisonToStart == 0 && comparisonToEnd == 0)
+                                newTimePeriod = new TimePeriod(eventStart, eventEnd);
+                            else if (comparisonToStart == 0)
+                            {
+                                if (eventStart.TimeOfDay.CompareTo(latestTime.TimeOfDay) < 0)
+                                    newTimePeriod = new TimePeriod(eventStart, latestTime);
+                            }
+                            else if (comparisonToEnd == 0)
+                            {
+                                int comparisonToLatest = eventEnd.TimeOfDay.CompareTo(latestTime.TimeOfDay);
+                                int comparisonToEarliest = eventEnd.TimeOfDay.CompareTo(earliestTime.TimeOfDay);
+                                if (comparisonToLatest < 0 && comparisonToEarliest > 0)
+                                    newTimePeriod = new TimePeriod(earliestTime, eventEnd);
+                                else if (comparisonToLatest >= 0)
+                                    newTimePeriod = new TimePeriod(earliestTime, latestTime);
+                            }
+                            else
                                 newTimePeriod = new TimePeriod(earliestTime, latestTime);
-                        }
-                        else
-                            newTimePeriod = new TimePeriod(earliestTime, latestTime);
 
-                        if (newTimePeriod != null)
-                        {
-                            if (!busySlots[currDay].Contains(newTimePeriod))
-                                busySlots[currDay].Add(newTimePeriod);
+                            if (newTimePeriod != null)
+                            {
+                                if (!busySlots[currDay].Contains(newTimePeriod))
+                                    busySlots[currDay].Add(newTimePeriod);
+                            }
                         }
                     }
                 }
