@@ -43,6 +43,16 @@ namespace introse
             return this.startTime.TimeOfDay.CompareTo(other.startTime.TimeOfDay);
         }
 
+        public bool isWithin(TimePeriod other)
+        {
+            if (startTime.CompareTo(other.startTime) == 0 && endTime.CompareTo(other.endTime) == 0)
+                return true;
+            if (IsBetweenInclusive(other.startTime, other.endTime, startTime) && IsBetweenInclusive(other.startTime, other.endTime, endTime))
+                return true;
+
+            return false;
+        }
+
         public bool IntersectsExclusive(TimePeriod other)
         {
             if (startTime.CompareTo(other.startTime) == 0 && endTime.CompareTo(other.endTime) == 0)
