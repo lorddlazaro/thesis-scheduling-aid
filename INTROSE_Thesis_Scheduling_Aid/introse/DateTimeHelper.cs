@@ -10,8 +10,6 @@ namespace introse
 
         public static bool DatesIntersectInclusive(DateTime sDate1, DateTime eDate1, DateTime sDate2, DateTime eDate2) 
         {
-            Console.Write("Checking: " + sDate1.Date + "-" + eDate1.Date + " vs " + sDate2.Date + "-" + eDate2.Date);
-
             if (sDate1.Date.CompareTo(sDate2.Date) == 0 && eDate1.Date.CompareTo(eDate2.Date) == 0)
                 return true;
             if (IsBetweenInclusive(sDate1, sDate2, eDate2) || IsBetweenInclusive(eDate1, sDate2, eDate2))
