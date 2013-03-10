@@ -16,12 +16,20 @@ namespace introse
         SchedulingDataManager sdm = new SchedulingDataManager();
         String currPanelistID; //To keep track of which cluster is currently selected.
         String currThesisGroupID;
-        AddDefenseSchedule form2;
-        AddThesisGroup form3;
+        DefenseScheduleForm form2;
+        //AddThesisGroup form3;
 
         private TimeSpan topleft;
         private List<String> intervals, day_names;
         private List<Label> time_table, days;
+
+        private DateTime start;
+        private DateTime end;
+
+        public string CurrPanelistID { get { return currPanelistID; } }
+        public SchedulingDataManager Sdm { get { return sdm; } }
+        public DateTime Start { get { return start; } }
+        public DateTime End { get { return end; } }
 
         public Form1()
         {
@@ -224,14 +232,17 @@ namespace introse
         {
             //Console.WriteLine("ID: " + e.Node.Name);
             //Console.WriteLine(e.Node);
-            DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
-            DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
+            start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
+            end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
             if (e.Node.Level == 0)
             {
                 currPanelistID = e.Node.Name;
 
-                sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
-                
+                if (form2 != null)
+                    try { form2.Dispose(); }
+                    catch (Exception ex) { }
+                form2 = new DefenseScheduleForm(this, "");
+
                 if(!currThesisGroupID.Equals(""))
                     ChangeSelectedGroup(start, end, "");
 
@@ -241,7 +252,7 @@ namespace introse
             else if (e.Node.Level == 1)
             {
                 currPanelistID = "";
-                sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
+
                 if (!currThesisGroupID.Equals(e.Node.Name))
                 {
                     ChangeSelectedGroup(start, end, e.Node.Name);
@@ -252,17 +263,26 @@ namespace introse
         
         private void treeView2_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
-            DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
+            start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
+            end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
             currPanelistID = "";
-            sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
+
+            if (form2 != null)
+                try { form2.Dispose(); }
+                catch (Exception ex) { }
+            form2 = new DefenseScheduleForm(this, e.Node.Name);
+
             if (!currThesisGroupID.Equals(e.Node.Name))
                 ChangeSelectedGroup(start, end, e.Node.Name);
            
             tableLayoutPanel1.Refresh();
         }
 
-        private void ChangeSelectedGroup(DateTime start, DateTime end, String newThesisGroupID) 
+        public void tableRefresh() {
+            tableLayoutPanel1.Refresh();
+        }
+
+        public void ChangeSelectedGroup(DateTime start, DateTime end, String newThesisGroupID) 
         {
             currThesisGroupID = newThesisGroupID;
             selectedGrpLabel.Text = "Selected: " + sdm.GetGroupInfo(currThesisGroupID);
@@ -280,14 +300,14 @@ namespace introse
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            form3 = new AddThesisGroup();
-            form3.Show();
+            //form3 = new AddThesisGroup();
+            //form3.Show();
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            form2 = new AddDefenseSchedule();
-            form2.Show();
+            //form2 = new AddDefenseSchedule();
+            //form2.Show();
         }
 
         private void toolStripButton1_Click_1(object sender, EventArgs e)
