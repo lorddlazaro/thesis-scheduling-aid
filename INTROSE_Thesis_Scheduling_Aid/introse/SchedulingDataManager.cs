@@ -107,20 +107,23 @@ namespace introse
         public void RefreshClusterDefSchedules(DateTime startDate, DateTime endDate, String panelistID)
         {
             clusterDefScheds.Clear();
-            List<String> groupIDs = new List<String>();
-            String query = "select thesisGroupID from panelassignment where panelistID = '" + panelistID + "';";
-
-            groupIDs = (dbHandler.Select(query, 1))[0];
-
-            int size = groupIDs.Count;
-            DefenseSchedule defSched;
-
-            for (int i = 0; i < size; i++)
+            if (!panelistID.Equals(""))
             {
-                defSched = GetDefSched(startDate, endDate, groupIDs.ElementAt(i));
-                if (defSched != null)
-                    clusterDefScheds.Add(defSched);
-            }
+                List<String> groupIDs = new List<String>();
+                String query = "select thesisGroupID from panelassignment where panelistID = '" + panelistID + "';";
+
+                groupIDs = (dbHandler.Select(query, 1))[0];
+
+                int size = groupIDs.Count;
+                DefenseSchedule defSched;
+
+                for (int i = 0; i < size; i++)
+                {
+                    defSched = GetDefSched(startDate, endDate, groupIDs.ElementAt(i));
+                    if (defSched != null)
+                        clusterDefScheds.Add(defSched);
+                }
+            }   
         }
 
         /* This method returns a DefenseSchedule object within the specified startDate and endDDate 
@@ -176,6 +179,13 @@ namespace introse
          * */
         public void RefreshSelectedGroupFreeTimes(DateTime startDate, DateTime endDate, String thesisGroupID)
         {
+            if (thesisGroupID.Equals(""))
+            {
+                for (int i = 0; i < selectedGroupFreeTimes.Length; i++)
+                    selectedGroupFreeTimes[i].Clear();
+                return;
+            }
+
             List<TimePeriod>[] days = new List<TimePeriod>[DEFWEEK_DAYS];
             InitListTimePeriodArray(days);
             AddBusyTimePeriods(thesisGroupID, startDate, endDate, days);
