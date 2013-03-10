@@ -28,78 +28,93 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.buttonEditSched = new System.Windows.Forms.Button();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
-            this.studentLabel = new System.Windows.Forms.Label();
+            this.rtBoxClassScheds = new System.Windows.Forms.RichTextBox();
+            this.rtBoxEvents = new System.Windows.Forms.RichTextBox();
+            this.personLabel = new System.Windows.Forms.Label();
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.studentTreeView = new System.Windows.Forms.TreeView();
+            this.panelistTreeView = new System.Windows.Forms.TreeView();
+            this.btnSwitchView = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // buttonEditSched
+            // rtBoxClassScheds
             // 
-            this.buttonEditSched.Location = new System.Drawing.Point(334, 27);
-            this.buttonEditSched.Name = "buttonEditSched";
-            this.buttonEditSched.Size = new System.Drawing.Size(184, 25);
-            this.buttonEditSched.TabIndex = 0;
-            this.buttonEditSched.Text = "Edit  Class Schedules";
-            this.buttonEditSched.UseVisualStyleBackColor = true;
+            this.rtBoxClassScheds.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtBoxClassScheds.Location = new System.Drawing.Point(254, 58);
+            this.rtBoxClassScheds.Name = "rtBoxClassScheds";
+            this.rtBoxClassScheds.ReadOnly = true;
+            this.rtBoxClassScheds.Size = new System.Drawing.Size(371, 528);
+            this.rtBoxClassScheds.TabIndex = 2;
+            this.rtBoxClassScheds.Text = "";
             // 
-            // richTextBox1
+            // rtBoxEvents
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(280, 58);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(283, 420);
-            this.richTextBox1.TabIndex = 2;
-            this.richTextBox1.Text = "";
+            this.rtBoxEvents.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtBoxEvents.Location = new System.Drawing.Point(631, 58);
+            this.rtBoxEvents.Name = "rtBoxEvents";
+            this.rtBoxEvents.ReadOnly = true;
+            this.rtBoxEvents.Size = new System.Drawing.Size(366, 528);
+            this.rtBoxEvents.TabIndex = 3;
+            this.rtBoxEvents.Text = "";
             // 
-            // richTextBox2
+            // personLabel
             // 
-            this.richTextBox2.Location = new System.Drawing.Point(569, 58);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.ReadOnly = true;
-            this.richTextBox2.Size = new System.Drawing.Size(212, 420);
-            this.richTextBox2.TabIndex = 3;
-            this.richTextBox2.Text = "";
-            // 
-            // studentLabel
-            // 
-            this.studentLabel.AutoSize = true;
-            this.studentLabel.Location = new System.Drawing.Point(10, 39);
-            this.studentLabel.Name = "studentLabel";
-            this.studentLabel.Size = new System.Drawing.Size(52, 13);
-            this.studentLabel.TabIndex = 4;
-            this.studentLabel.Text = "Students:";
+            this.personLabel.AutoSize = true;
+            this.personLabel.Location = new System.Drawing.Point(10, 39);
+            this.personLabel.Name = "personLabel";
+            this.personLabel.Size = new System.Drawing.Size(52, 13);
+            this.personLabel.TabIndex = 4;
+            this.personLabel.Text = "Students:";
             // 
             // buttonRefresh
             // 
-            this.buttonRefresh.Location = new System.Drawing.Point(13, 4);
+            this.buttonRefresh.Location = new System.Drawing.Point(407, 3);
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(75, 23);
             this.buttonRefresh.TabIndex = 5;
             this.buttonRefresh.Text = "Refresh";
             this.buttonRefresh.UseVisualStyleBackColor = true;
+            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
             // studentTreeView
             // 
             this.studentTreeView.Location = new System.Drawing.Point(13, 58);
             this.studentTreeView.Name = "studentTreeView";
-            this.studentTreeView.Size = new System.Drawing.Size(235, 420);
+            this.studentTreeView.Size = new System.Drawing.Size(235, 528);
             this.studentTreeView.TabIndex = 6;
+            this.studentTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.studentTreeView_NodeMouseClick);
+            // 
+            // panelistTreeView
+            // 
+            this.panelistTreeView.Location = new System.Drawing.Point(13, 58);
+            this.panelistTreeView.Name = "panelistTreeView";
+            this.panelistTreeView.Size = new System.Drawing.Size(235, 528);
+            this.panelistTreeView.TabIndex = 7;
+            this.panelistTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.panelistTreeView_NodeMouseClick);
+            // 
+            // btnSwitchView
+            // 
+            this.btnSwitchView.Location = new System.Drawing.Point(68, 33);
+            this.btnSwitchView.Name = "btnSwitchView";
+            this.btnSwitchView.Size = new System.Drawing.Size(131, 23);
+            this.btnSwitchView.TabIndex = 8;
+            this.btnSwitchView.Text = "Switch to Panelists";
+            this.btnSwitchView.UseVisualStyleBackColor = true;
+            this.btnSwitchView.Click += new System.EventHandler(this.btnSwitchView_Click);
             // 
             // ScheduleEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.studentTreeView);
+            this.Controls.Add(this.btnSwitchView);
             this.Controls.Add(this.buttonRefresh);
-            this.Controls.Add(this.studentLabel);
-            this.Controls.Add(this.richTextBox2);
-            this.Controls.Add(this.richTextBox1);
-            this.Controls.Add(this.buttonEditSched);
+            this.Controls.Add(this.personLabel);
+            this.Controls.Add(this.rtBoxEvents);
+            this.Controls.Add(this.rtBoxClassScheds);
+            this.Controls.Add(this.panelistTreeView);
+            this.Controls.Add(this.studentTreeView);
             this.Name = "ScheduleEditor";
-            this.Size = new System.Drawing.Size(800, 500);
+            this.Size = new System.Drawing.Size(1000, 600);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -107,11 +122,12 @@
 
         #endregion
 
-        private System.Windows.Forms.Button buttonEditSched;
-        private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.RichTextBox richTextBox2;
-        private System.Windows.Forms.Label studentLabel;
+        private System.Windows.Forms.RichTextBox rtBoxClassScheds;
+        private System.Windows.Forms.RichTextBox rtBoxEvents;
+        private System.Windows.Forms.Label personLabel;
         private System.Windows.Forms.Button buttonRefresh;
         private System.Windows.Forms.TreeView studentTreeView;
+        private System.Windows.Forms.TreeView panelistTreeView;
+        private System.Windows.Forms.Button btnSwitchView;
     }
 }

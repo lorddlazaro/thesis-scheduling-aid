@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.selectedGrpLabel = new System.Windows.Forms.Label();
             this.defenseweek_start = new System.Windows.Forms.DateTimePicker();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.day6 = new System.Windows.Forms.Label();
@@ -51,9 +52,15 @@
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.dateTimePickerStart = new System.Windows.Forms.DateTimePicker();
+            this.buttonViewDefScheds = new System.Windows.Forms.Button();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.scheduleEditor1 = new CustomUserControl.ScheduleEditor();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.selectedGrpLabel = new System.Windows.Forms.Label();
+            this.dateTimePickerEnd = new System.Windows.Forms.DateTimePicker();
+            this.labelDisplayMsg = new System.Windows.Forms.Label();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -61,6 +68,8 @@
             this.splitContainer1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabPage1
@@ -76,6 +85,15 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Defense Schedules";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // selectedGrpLabel
+            // 
+            this.selectedGrpLabel.AutoSize = true;
+            this.selectedGrpLabel.Location = new System.Drawing.Point(355, 10);
+            this.selectedGrpLabel.Name = "selectedGrpLabel";
+            this.selectedGrpLabel.Size = new System.Drawing.Size(52, 13);
+            this.selectedGrpLabel.TabIndex = 12;
+            this.selectedGrpLabel.Text = "Selected:";
             // 
             // defenseweek_start
             // 
@@ -461,9 +479,16 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1007, 705);
             this.tabControl1.TabIndex = 0;
+            this.tabControl1.Click += new System.EventHandler(this.tabControl1_Click);
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.labelDisplayMsg);
+            this.tabPage4.Controls.Add(this.dateTimePickerEnd);
+            this.tabPage4.Controls.Add(this.label2);
+            this.tabPage4.Controls.Add(this.dateTimePickerStart);
+            this.tabPage4.Controls.Add(this.buttonViewDefScheds);
+            this.tabPage4.Controls.Add(this.richTextBox1);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(999, 679);
@@ -471,8 +496,44 @@
             this.tabPage4.Text = "View Defense Schedules";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(305, 45);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(16, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "to";
+            // 
+            // dateTimePickerStart
+            // 
+            this.dateTimePickerStart.Location = new System.Drawing.Point(214, 22);
+            this.dateTimePickerStart.Name = "dateTimePickerStart";
+            this.dateTimePickerStart.Size = new System.Drawing.Size(200, 20);
+            this.dateTimePickerStart.TabIndex = 2;
+            // 
+            // buttonViewDefScheds
+            // 
+            this.buttonViewDefScheds.Location = new System.Drawing.Point(32, 22);
+            this.buttonViewDefScheds.Name = "buttonViewDefScheds";
+            this.buttonViewDefScheds.Size = new System.Drawing.Size(163, 26);
+            this.buttonViewDefScheds.TabIndex = 1;
+            this.buttonViewDefScheds.Text = "Generate Schedules From";
+            this.buttonViewDefScheds.UseVisualStyleBackColor = true;
+            this.buttonViewDefScheds.Click += new System.EventHandler(this.buttonViewDefScheds_Click);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextBox1.Location = new System.Drawing.Point(32, 110);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(932, 545);
+            this.richTextBox1.TabIndex = 0;
+            this.richTextBox1.Text = "";
+            // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.scheduleEditor1);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -480,6 +541,13 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Student/Panelist Schedules";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // scheduleEditor1
+            // 
+            this.scheduleEditor1.Location = new System.Drawing.Point(-1, 0);
+            this.scheduleEditor1.Name = "scheduleEditor1";
+            this.scheduleEditor1.Size = new System.Drawing.Size(1000, 648);
+            this.scheduleEditor1.TabIndex = 0;
             // 
             // tabPage3
             // 
@@ -491,14 +559,20 @@
             this.tabPage3.Text = "Thesis Groups";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // selectedGrpLabel
+            // dateTimePickerEnd
             // 
-            this.selectedGrpLabel.AutoSize = true;
-            this.selectedGrpLabel.Location = new System.Drawing.Point(355, 10);
-            this.selectedGrpLabel.Name = "selectedGrpLabel";
-            this.selectedGrpLabel.Size = new System.Drawing.Size(52, 13);
-            this.selectedGrpLabel.TabIndex = 12;
-            this.selectedGrpLabel.Text = "Selected:";
+            this.dateTimePickerEnd.Location = new System.Drawing.Point(214, 61);
+            this.dateTimePickerEnd.Name = "dateTimePickerEnd";
+            this.dateTimePickerEnd.Size = new System.Drawing.Size(200, 20);
+            this.dateTimePickerEnd.TabIndex = 4;
+            // 
+            // labelDisplayMsg
+            // 
+            this.labelDisplayMsg.AutoSize = true;
+            this.labelDisplayMsg.Location = new System.Drawing.Point(211, 94);
+            this.labelDisplayMsg.Name = "labelDisplayMsg";
+            this.labelDisplayMsg.Size = new System.Drawing.Size(0, 13);
+            this.labelDisplayMsg.TabIndex = 5;
             // 
             // Form1
             // 
@@ -517,6 +591,9 @@
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -548,6 +625,13 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.Label selectedGrpLabel;
+        private CustomUserControl.ScheduleEditor scheduleEditor1;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Button buttonViewDefScheds;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.DateTimePicker dateTimePickerStart;
+        private System.Windows.Forms.DateTimePicker dateTimePickerEnd;
+        private System.Windows.Forms.Label labelDisplayMsg;
 
 
     }

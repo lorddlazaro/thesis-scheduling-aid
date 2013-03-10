@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace introse
+namespace CustomUserControl
 {
     public class DateTimeHelper
     {
+
+   
 
         public static bool DatesIntersectInclusive(DateTime sDate1, DateTime eDate1, DateTime sDate2, DateTime eDate2) 
         {
@@ -51,6 +53,7 @@ namespace introse
             return -1;
         }
 
+      
         //Just for debugging purposes
         public static void PrintTimePeriods(List<TimePeriod> list)
         {

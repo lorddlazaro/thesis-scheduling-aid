@@ -500,7 +500,7 @@ namespace introse
             size = columns[0].Count;
             for (int i = 0; i < size; i++) 
             {
-                currDay = ConvertToInt(columns[0].ElementAt(i));
+                currDay = DateTimeHelper.ConvertToInt(columns[0].ElementAt(i));
                 startTime = Convert.ToDateTime(columns[1].ElementAt(i));
                 endTime = Convert.ToDateTime(columns[2].ElementAt(i));
                 newSlot = new TimePeriod(startTime, endTime);
@@ -597,23 +597,7 @@ namespace introse
         }
          * */
 
-        private int ConvertToInt(String day)
-        {
-            if (day.Equals("M"))
-                return 0;
-            if (day.Equals("T"))
-                return 1;
-            if (day.Equals("W"))
-                return 2;
-            if (day.Equals("H"))
-                return 3;
-            if (day.Equals("F"))
-                return 4;
-            if (day.Equals("S"))
-                return 5;
-
-            return -1;
-        }
+       
 
         /* This method is called by RefreshSelectedGroupFreeTimes() to add new distinct timeslots to the list. 
          * It is only a support method for RefreshSelectedGroupFreeTimes(). This is used both for class timeslots
