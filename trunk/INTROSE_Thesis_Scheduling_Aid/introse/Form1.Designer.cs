@@ -100,6 +100,7 @@
             this.splitContainer1.Panel1.Controls.Add(this.day2);
             this.splitContainer1.Panel1.Controls.Add(this.day1);
             this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel1);
+            this.splitContainer1.Panel1.MouseEnter += new System.EventHandler(this.splitContainer1_Panel1_MouseEnter);
             // 
             // splitContainer1.Panel2
             // 

@@ -270,5 +270,10 @@ namespace introse
                 toolStripButton1.Text = "Collapse Clusters";
             }
         }
+
+        private void splitContainer1_Panel1_MouseEnter(object sender, EventArgs e)
+        {
+            splitContainer1.Panel1.Focus();
+        }
     }
 }
