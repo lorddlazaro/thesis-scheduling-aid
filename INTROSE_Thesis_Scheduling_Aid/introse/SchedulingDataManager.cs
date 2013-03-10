@@ -59,7 +59,8 @@ namespace introse
                 query = "Select firstName, MI, lastName from panelist where panelistid = " + parentList[0].ElementAt(i) + ";";
                 parentInfo = dbHandler.Select(query, 3);
 
-                query = "Select t.thesisgroupID,t.title from thesisgroup t, panelassignment p where t.thesisgroupid = p.thesisgroupid and p.panelistID =" + parentList[0].ElementAt(i) + ";";
+                //query = "Select t.thesisgroupID,t.title from thesisgroup t, panelassignment p where t.thesisgroupid = p.thesisgroupid and p.panelistID =" + parentList[0].ElementAt(i) + ";";
+                query = "Select thesisgroupID, title from thesisgroup where thesisgroupid in( select thesisgroupid from panelassignment where panelistID =" + parentList[0].ElementAt(i) + ");";
                 childList = dbHandler.Select(query, 2);
 
                 parent = new TreeNode();
