@@ -50,6 +50,8 @@ namespace introse
                 fillComboBox();
 
             this.Visible = true;
+            this.TopMost = true;
+            this.Focus();
             addMode = false;
         }
 
@@ -111,7 +113,7 @@ namespace introse
             if (records.Count > 0)
             {
                 currentRecordNo.Text = "1";
-                form.ChangeSelectedGroup(records.ElementAt(0).Thesisgroupid);
+                form.ChangeSelectedGroup(form.Start, form.End, records.ElementAt(0).Thesisgroupid);
             }
             else
                 currentRecordNo.Text = "0";
@@ -145,10 +147,10 @@ namespace introse
             if (list[0].Count() != 0)
                 unassignedGroups.Add(new Record(list[0].ElementAt(0), list[1].ElementAt(0), list[2].ElementAt(0)));
 
-            if (records.Count > 0)
+            if (records.Count != 0)
             {
                 currentRecordNo.Text = "1";
-                form.ChangeSelectedGroup(records.ElementAt(0).Thesisgroupid);
+                form.ChangeSelectedGroup(form.Start, form.End, records.ElementAt(0).Thesisgroupid);
             }
             else
                 currentRecordNo.Text = "0";
@@ -467,14 +469,10 @@ namespace introse
             updateEnabledAddButton();
             updateEnabledLeftRightButtons();
 
-            try
-            {
-                form.ChangeSelectedGroup(records.ElementAt(text - 1).Thesisgroupid);
-            }
-            catch (Exception ex) { }
            
             if (text > 0 && text <= records.Count())
             {
+                form.ChangeSelectedGroup(form.Start, form.End, records.ElementAt(text - 1).Thesisgroupid);
                 deleteButton.Enabled = true;
                 if(!addMode)
                     currRecord = records.ElementAt(text - 1);
@@ -494,7 +492,7 @@ namespace introse
                 {
                     courseTextBox.Text = unassignedGroups.ElementAt(i).Course;
                     thesisTitleTextBox.Text = thesisTitleComboBox.SelectedText;
-                    form.ChangeSelectedGroup(unassignedGroups.ElementAt(i).Thesisgroupid);
+                    form.ChangeSelectedGroup(form.Start, form.End,unassignedGroups.ElementAt(i).Thesisgroupid);
                     break;
                 }
 
