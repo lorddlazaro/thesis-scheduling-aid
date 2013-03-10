@@ -268,7 +268,7 @@ namespace introse
             selectedGrpLabel.Text = "Selected: " + sdm.GetGroupInfo(currThesisGroupID);
             sdm.RefreshSelectedGroupFreeTimes(start, end, currThesisGroupID);
             
-            /*For debugging purposes*/
+            /*For debugging purposes
             for (int currDay = 0; currDay < 6; currDay++)
             {
                 Console.WriteLine("Day: " + currDay);
