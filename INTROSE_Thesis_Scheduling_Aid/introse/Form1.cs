@@ -172,6 +172,9 @@ namespace introse
 
         private void defenseweek_start_ValueChanged(object sender, EventArgs e)
         {
+            if (defenseweek_start.Value.DayOfWeek.ToString() == "Sunday")
+                defenseweek_start.Value = defenseweek_start.Value.AddDays(1);
+
             DateTime curr = new DateTime(defenseweek_start.Value.Year, defenseweek_start.Value.Month, defenseweek_start.Value.Day);
 
             for (int i = 0; i < 6; i++, curr = curr.AddDays(1))
