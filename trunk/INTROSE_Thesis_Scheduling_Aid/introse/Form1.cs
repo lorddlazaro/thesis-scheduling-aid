@@ -108,7 +108,10 @@ namespace introse
                         a = sdm.ClusterDefScheds.ElementAt(j).StartTime.TimeOfDay - (new TimeSpan(8, 0, 0));
                         ypos = a.Hours * 120 + a.Minutes * 2;
 
+                        //rectangle color
                         e.Graphics.FillRectangle(Brushes.LightBlue, xpos+1, ypos+1, width-1, height);
+                        // rectangle borders
+                        e.Graphics.DrawRectangle(new Pen(Color.Black), xpos, ypos+1, width, height); 
                     }
                  }
 
@@ -122,7 +125,10 @@ namespace introse
                     a = sdm.SelectedGroupFreeTimes[freeTimeIndex].ElementAt(j).StartTime.TimeOfDay - (new TimeSpan(8, 0, 0));
                     ypos = a.Hours * 120 + a.Minutes * 2;
 
+                    //rectangle color
                     e.Graphics.FillRectangle(Brushes.LightPink, xpos+1, ypos+1, width-1, height);
+                    // rectangle borders
+                    e.Graphics.DrawRectangle(new Pen(Color.Black), xpos, ypos + 1, width, height);
                 }
             }
 
