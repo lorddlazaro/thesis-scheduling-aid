@@ -175,7 +175,7 @@ namespace introse
 
         private void defenseweek_start_ValueChanged(object sender, EventArgs e)
         {
-            if (defenseweek_start.Value.DayOfWeek.ToString().CompareTo("Sunday") != 0)
+            if (defenseweek_start.Value.DayOfWeek.ToString().CompareTo("Sunday") == 0)
                 defenseweek_start.Value = defenseweek_start.Value.AddDays(1);
             else 
             {
@@ -193,7 +193,8 @@ namespace introse
                 if (!currPanelistID.Equals(""))
                     sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
                 else if (!currThesisGroupID.Equals(""))
-                    ChangeSelectedGroup(currThesisGroupID);
+                    //ChangeSelectedGroup(currThesisGroupID);
+                    sdm.RefreshSelectedGroupFreeTimes(start, end, currThesisGroupID);
 
                 tableLayoutPanel1.Refresh();
             }
@@ -223,41 +224,50 @@ namespace introse
         {
             //Console.WriteLine("ID: " + e.Node.Name);
             //Console.WriteLine(e.Node);
+            DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
+            DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
             if (e.Node.Level == 0)
             {
-                DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
-                DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
                 currPanelistID = e.Node.Name;
-                currThesisGroupID = "";
 
                 sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
+                
+                if(!currThesisGroupID.Equals(""))
+                    ChangeSelectedGroup(start, end, "");
+
                 if (sdm.ClusterDefScheds.Count > 0)
                     tableLayoutPanel1.Refresh();
             }
             else if (e.Node.Level == 1)
             {
                 currPanelistID = "";
-                ChangeSelectedGroup(e.Node.Name);
-                tableLayoutPanel1.Refresh();
+                sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
+                if (!currThesisGroupID.Equals(e.Node.Name))
+                {
+                    ChangeSelectedGroup(start, end, e.Node.Name);
+                    tableLayoutPanel1.Refresh();
+                }
             }
         }
         
         private void treeView2_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
+            DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
+            DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
             currPanelistID = "";
-            ChangeSelectedGroup(e.Node.Name);
+            sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
+            if (!currThesisGroupID.Equals(e.Node.Name))
+                ChangeSelectedGroup(start, end, e.Node.Name);
+           
+            tableLayoutPanel1.Refresh();
         }
 
-        private void ChangeSelectedGroup(String newThesisGroupID) 
+        private void ChangeSelectedGroup(DateTime start, DateTime end, String newThesisGroupID) 
         {
             currThesisGroupID = newThesisGroupID;
             selectedGrpLabel.Text = "Selected: " + sdm.GetGroupInfo(currThesisGroupID);
-
-            DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
-            DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
-            
             sdm.RefreshSelectedGroupFreeTimes(start, end, currThesisGroupID);
-
+            
             /*For debugging purposes*/
             for (int currDay = 0; currDay < 6; currDay++)
             {
