@@ -15,12 +15,14 @@ namespace introse
         DBce db = new DBce();
         SchedulingDataManager sdm = new SchedulingDataManager();
         String currPanelistID; //To keep track of which cluster is currently selected.
-        AddDefenseSchedule form2;
-        AddThesisGroup form3;
+        DefenseScheduleForm form2;
+        //AddThesisGroup form3;
 
         private TimeSpan topleft;
         private List<String> intervals, day_names;
         private List<Label> time_table, days;
+
+        public string CurrPanelistID { get { return currPanelistID; } }
 
         public Form1()
         {
@@ -223,6 +225,9 @@ namespace introse
                 DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
                 currPanelistID = e.Node.Name;
 
+                form2 = new DefenseScheduleForm(sdm, this);
+                form2.TopMost = true;
+
                 sdm.RefreshClusterDefSchedules(start, end, currPanelistID);
                 if (sdm.ClusterDefScheds.Count > 0)
                     tableLayoutPanel1.Refresh();
@@ -246,6 +251,23 @@ namespace introse
                 tableLayoutPanel1.Refresh();
             }
         }
+
+        public void childClick(string thesisgroupid) {
+            DateTime start = Convert.ToDateTime(days.ElementAt(0).Text.Split('\n')[1]);
+            DateTime end = Convert.ToDateTime(days.ElementAt(5).Text.Split('\n')[1]);
+
+            sdm.RefreshSelectedGroupFreeTimes(start, end, thesisgroupid);
+
+            for (int currDay = 0; currDay < 6; currDay++)
+            {
+                Console.WriteLine("Day: " + currDay);
+                for (int i = 0; i < sdm.SelectedGroupFreeTimes[currDay].Count; i++)
+                    Console.WriteLine(sdm.SelectedGroupFreeTimes[currDay].ElementAt(i));
+            }
+
+
+            tableLayoutPanel1.Refresh();
+        }
         
         private void treeView2_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -255,13 +277,13 @@ namespace introse
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            form3 = new AddThesisGroup();
-            form3.Show();
+            //form3 = new AddThesisGroup();
+            //form3.Show();
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            form2 = new AddDefenseSchedule();
+            form2 = new DefenseScheduleForm();
             form2.Show();
         }
 
