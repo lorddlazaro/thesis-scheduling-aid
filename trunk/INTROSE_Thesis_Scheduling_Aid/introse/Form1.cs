@@ -81,7 +81,7 @@ namespace introse
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
-            int xpos, ypos = 0, width = 108, height = 1690;
+            int xpos, ypos = 0, width = 108, height;
             int curr_day, curr_mo, curr_yr;
             DateTime dwd; // defense week date :D
 
@@ -137,7 +137,7 @@ namespace introse
             {
                 xpos = 108 * (i + 1);
                 ypos = 1;
-                height = 1690;
+                height = 1570;
                 e.Graphics.DrawRectangle(new Pen(Color.Black), xpos, ypos, width, height);
             }
 
@@ -146,7 +146,7 @@ namespace introse
             ypos = 1;
             width = 756;
 
-            while (ypos <= 1690)
+            while (ypos <= 1570)
             {
                 e.Graphics.DrawLine(new Pen(Color.Black), xpos, ypos, width, ypos);
                 ypos += 60;
