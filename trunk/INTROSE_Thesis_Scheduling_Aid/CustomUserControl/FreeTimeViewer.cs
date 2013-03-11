@@ -84,9 +84,10 @@ namespace CustomUserControl
                 currDateTime = Convert.ToDateTime(labelDates[i].Text);
                 currDay = schedulingDM.SelectedGroupFreeTimes[(int)currDateTime.DayOfWeek - 1];
                 size = currDay.Count;
-                Console.WriteLine("["+i+"] has "+size+" elements.");
+                //Console.WriteLine("["+i+"] has "+size+" elements.");
                 for (int j = 0; j < size; j++) 
-                    DrawTimePeriod(g, Color.LightGreen, panelRectangle, i, currDay[j]);
+                    if(currDay[j].EndTime.TimeOfDay.Subtract(currDay[j].StartTime.TimeOfDay).TotalMinutes >= Constants.MIN_DURATION_MINS)
+                        DrawTimePeriod(g, Color.LightGreen, panelRectangle, i, currDay[j]);
             }
         }
 
@@ -101,11 +102,16 @@ namespace CustomUserControl
             double schedHeight = panelRectangle.Height * (timePeriod.EndTime.Subtract(timePeriod.StartTime).TotalMinutes / totalMinsInDay);
 
             int margin = 2;
-
+            /* For Debugging Purposes
             Console.WriteLine(timePeriod.ToString());
             Console.WriteLine((leftX + dayIndex * dayWidth + margin)+", "+((int)(topY + yCoord))+", "+(dayWidth - margin * 2)+", "+(int)schedHeight);
             Console.WriteLine();
-            g.FillRectangle(new SolidBrush(color), new Rectangle(leftX + dayIndex * dayWidth + margin, (int)(topY + yCoord), dayWidth - margin * 2, (int)schedHeight));
+            /* For Debugging Purposes*/
+
+            Font font1 = new Font("Arial", 12, FontStyle.Bold, GraphicsUnit.Point);
+            Rectangle rect = new Rectangle(leftX + dayIndex * dayWidth + margin, (int)(topY + yCoord), dayWidth - margin * 2, (int)schedHeight);
+            g.FillRectangle(new SolidBrush(color), rect);
+            g.DrawString(timePeriod.ToString(),font1, new SolidBrush(Color.Black),  rect);
         }
 
         /****** END: Drawing Methods*******/
