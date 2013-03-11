@@ -210,6 +210,7 @@
             // 
             this.treeViewClusters.Location = new System.Drawing.Point(732, 70);
             this.treeViewClusters.Name = "treeViewClusters";
+            this.treeViewClusters.ShowNodeToolTips = true;
             this.treeViewClusters.Size = new System.Drawing.Size(254, 484);
             this.treeViewClusters.TabIndex = 14;
             this.treeViewClusters.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeViewClusters_NodeMouseClick);

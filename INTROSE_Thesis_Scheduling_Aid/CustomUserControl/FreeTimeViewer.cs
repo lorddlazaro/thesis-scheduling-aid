@@ -23,9 +23,15 @@ namespace CustomUserControl
         private String currPanelistID;
         private String currGroupID;
 
+        private int dayWidth;
+        private double totalMinsInDay;
+
         public FreeTimeViewer()
         {
             InitializeComponent();
+
+            dayWidth = panelCalendar.DisplayRectangle.Width / Constants.DAYS_IN_DEF_WEEK;
+            totalMinsInDay = Convert.ToDateTime(Constants.LIMIT_HOUR+":"+Constants.LIMIT_MIN).Subtract(Convert.ToDateTime(Constants.START_HOUR+":"+Constants.START_MIN)).TotalMinutes;
 
             currPanelistID = "";
             currGroupID = "";
@@ -45,7 +51,67 @@ namespace CustomUserControl
             schedulingDM.AddPanelistsToTree(treeViewClusters.Nodes);
             treeViewClusters.EndUpdate();
             treeViewClusters.ExpandAll();
+            treeViewClusters.Focus();
         }
+
+
+        /****** START: Drawing Methods*******/
+        private void panelCalendar_Paint(object sender, PaintEventArgs e)
+        {
+            DrawClusterDefScheds(e.Graphics, panelCalendar.DisplayRectangle);
+            DrawFreeTimes(e.Graphics, panelCalendar.DisplayRectangle);
+        }
+
+        private void DrawClusterDefScheds(Graphics g, Rectangle panelRectangle) 
+        {
+            int size = schedulingDM.ClusterDefScheds.Count;
+            DefenseSchedule curr;
+            for (int i = 0; i < size; i++)
+            {
+                curr = schedulingDM.ClusterDefScheds[i];
+                DrawTimePeriod(g, Color.Red, panelRectangle, ((int)curr.StartTime.DayOfWeek) - 1, curr );
+            }
+        }
+
+        private void DrawFreeTimes(Graphics g, Rectangle panelRectangle) 
+        {
+            int size;
+            List<TimePeriod> currDay;
+            DateTime currDateTime;
+
+            for (int i = 0; i < Constants.DAYS_IN_DEF_WEEK; i++) 
+            {
+                currDateTime = Convert.ToDateTime(labelDates[i].Text);
+                currDay = schedulingDM.SelectedGroupFreeTimes[(int)currDateTime.DayOfWeek - 1];
+                size = currDay.Count;
+                Console.WriteLine("["+i+"] has "+size+" elements.");
+                for (int j = 0; j < size; j++) 
+                    DrawTimePeriod(g, Color.LightGreen, panelRectangle, i, currDay[j]);
+            }
+        }
+
+        private void DrawTimePeriod(Graphics g, Color color, Rectangle panelRectangle, int dayIndex, TimePeriod timePeriod)
+        {
+            int leftX = panelRectangle.Left;
+            int topY = panelRectangle.Top;
+
+            DateTime earliestTime = new DateTime(timePeriod.StartTime.Year, timePeriod.StartTime.Month, timePeriod.StartTime.Day, Constants.START_HOUR, Constants.START_MIN, 0);
+
+            double yCoord = panelRectangle.Height * (timePeriod.StartTime.Subtract(earliestTime).TotalMinutes / totalMinsInDay);
+            double schedHeight = panelRectangle.Height * (timePeriod.EndTime.Subtract(timePeriod.StartTime).TotalMinutes / totalMinsInDay);
+
+            int margin = 2;
+
+            Console.WriteLine(timePeriod.ToString());
+            Console.WriteLine((leftX + dayIndex * dayWidth + margin)+", "+((int)(topY + yCoord))+", "+(dayWidth - margin * 2)+", "+(int)schedHeight);
+            Console.WriteLine();
+            g.FillRectangle(new SolidBrush(color), new Rectangle(leftX + dayIndex * dayWidth + margin, (int)(topY + yCoord), dayWidth - margin * 2, (int)schedHeight));
+        }
+
+        /****** END: Drawing Methods*******/
+
+
+        /****** START: EVENT LISTENERS*******/
 
         //This method updates the date labels when the selected startDate is changed.
         private void datePicker_ValueChanged(object sender, EventArgs e)
@@ -58,10 +124,9 @@ namespace CustomUserControl
                 MessageBox.Show("No school on Sundays.");
             }
 
-            
             DateTime currDate = startOfTheWeek;
             int i;
-            for (i = 0; i < labelDates.Count; i++ )
+            for (i = 0; i < labelDates.Count; i++)
             {
                 labelDates[i].TextAlign = ContentAlignment.MiddleCenter;
                 labelDates[i].Text = currDate.DayOfWeek + "\n" + currDate.ToString("d");
@@ -70,32 +135,17 @@ namespace CustomUserControl
                 if (currDate.DayOfWeek.Equals(System.DayOfWeek.Sunday))
                     currDate = currDate.AddDays(1);
             }
-          
-            endOfTheWeek = Convert.ToDateTime(labelDates[i-1].Text);
-        }
 
-        private void panelCalendar_Paint(object sender, PaintEventArgs e)
-        {
-            TestDrawRectangles(e.Graphics);
-            DrawClusterDefScheds(e.Graphics);
-            DrawFreeTimes(e.Graphics);
-        }
+            endOfTheWeek = Convert.ToDateTime(labelDates[i - 1].Text);
 
 
-        private void DrawClusterDefScheds(Graphics g) 
-        {
+
+            if (!currPanelistID.Equals(""))
+                schedulingDM.RefreshClusterDefSchedules(startOfTheWeek, endOfTheWeek, currPanelistID);
+            if (!currGroupID.Equals(""))
+                schedulingDM.RefreshClusterDefSchedules(startOfTheWeek, endOfTheWeek, currGroupID);
             
-        }
-
-        private void DrawFreeTimes(Graphics g) 
-        {
-        
-        }
-
-        private void TestDrawRectangles(Graphics g)
-        {
-            Brush brush = new SolidBrush(Color.Red);
-            g.FillRectangle(brush, new Rectangle(112, 44, 100, 50));
+            panelCalendar.Refresh();
         }
 
         private void treeViewClusters_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -110,7 +160,7 @@ namespace CustomUserControl
                 schedulingDM.RefreshClusterDefSchedules(startOfTheWeek, endOfTheWeek, currPanelistID);
                 UpdateProgressBar(progressBar1, progressBarIncrement);
 
-                /*
+                /* For scheduling defenses
                 if (form2 != null)
                     try { form2.Dispose(); }
                     catch (Exception ex) { }
@@ -169,7 +219,13 @@ namespace CustomUserControl
 
             progressBar1.Refresh();
         }
-     
+        
+        /****** END: EVENT LISTENERS*******/
+
+
+
+        /******* OTHER METHODS******/
+
         //Changes the selectedGroupID to the new ID given in the parameter, then refreshes the list of free times in schedulingDM.
         public void ChangeSelectedGroup(DateTime start, DateTime end, String newThesisGroupID)
         {
@@ -184,12 +240,11 @@ namespace CustomUserControl
             for (int currDay = 0; currDay < 6; currDay++)
             {
                 Console.WriteLine("Day: " + currDay);
-                for (int i = 0; i < sdm.SelectedGroupFreeTimes[currDay].Count; i++)
-                    Console.WriteLine(sdm.SelectedGroupFreeTimes[currDay].ElementAt(i));
+                for (int i = 0; i < schedulingDM.SelectedGroupFreeTimes[currDay].Count; i++)
+                    Console.WriteLine(schedulingDM.SelectedGroupFreeTimes[currDay].ElementAt(i));
             }
             /*For debugging purposes*/
         }
-
 
     }
 }

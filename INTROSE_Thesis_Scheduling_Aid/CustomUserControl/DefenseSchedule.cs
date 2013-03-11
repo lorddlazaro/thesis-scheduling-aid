@@ -21,5 +21,12 @@ namespace CustomUserControl
             this.place = place;
             this.groupTitle = groupTitle;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + "\n" + place + "\n" + groupTitle;
+        }
+
+
     }
 }

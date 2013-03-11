@@ -53,7 +53,12 @@ namespace CustomUserControl
             return -1;
         }
 
-      
+
+        public static int SubtractTime(DateTime dt1, DateTime dt2) 
+        {
+            return 0;
+        }
+
         //Just for debugging purposes
         public static void PrintTimePeriods(List<TimePeriod> list)
         {

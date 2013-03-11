@@ -586,19 +586,6 @@ namespace CustomUserControl
             return busySlots;
         }
 
-        /*
-        private int GetMinsDuration(String course) 
-        {
-            if (course.Equals("THSST-1"))
-                return THSST1_DEF_DURATION_MINS;
-            else if(course.Equals("THSST-3"))
-                return THSST3_DEF_DURATION_MINS
-            return -1;
-        }
-         * */
-
-       
-
         /* This method is called by RefreshSelectedGroupFreeTimes() to add new distinct timeslots to the list. 
          * It is only a support method for RefreshSelectedGroupFreeTimes(). This is used both for class timeslots
          * and event timeslots.
