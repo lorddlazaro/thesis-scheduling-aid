@@ -36,6 +36,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SqlServerCe, Version=3.5.1.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
@@ -50,9 +52,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassTimePeriod.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="DateTimeHelper.cs" />
     <Compile Include="DBce.cs" />
+    <Compile Include="DefenseSchedule.cs" />
     <Compile Include="Event.cs" />
+    <Compile Include="FreeTimeViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FreeTimeViewer.Designer.cs">
+      <DependentUpon>FreeTimeViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ScheduleEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -61,10 +76,18 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScheduleEditorDataManager.cs" />
+    <Compile Include="SchedulingDataManager.cs" />
     <Compile Include="TimePeriod.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="FreeTimeViewer.resx">
+      <DependentUpon>FreeTimeViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="ScheduleEditor.resx">
       <DependentUpon>ScheduleEditor.cs</DependentUpon>
     </EmbeddedResource>

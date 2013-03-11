@@ -37,7 +37,7 @@ namespace CustomUserControl
        
         public void RefreshStudentClassScheds(String studentID) 
         {
-            textClassScheds = "***********CLASS SCHEDULES***********\n";
+            textClassScheds = "********CLASS SCHEDULES********\n";
 
             String query = "SELECT timeslotID from studentSchedule where studentID = '" + studentID + "';";
             List<String> timeSlots = dbHandler.Select(query, 1)[0];
@@ -153,7 +153,7 @@ namespace CustomUserControl
                     query = "SELECT " + idColumnName + ", lastName, firstName, MI FROM panelist WHERE panelistID IN (SELECT panelistID FROM panelAssignment WHERE thesisGroupID = " + groupsTable[0].ElementAt(i) + ") ORDER BY lastName;";
                 else
                     return;
-                Console.WriteLine("!!!!!!!@@@@ " + query);
+               
                 studentTable = dbHandler.Select(query, 4);
                 for (int j = 0; j < studentTable[0].Count; j++)
                 {
