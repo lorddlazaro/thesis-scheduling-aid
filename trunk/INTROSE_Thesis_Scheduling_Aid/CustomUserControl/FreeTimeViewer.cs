@@ -65,13 +65,36 @@ namespace CustomUserControl
         private void DrawClusterDefScheds(Graphics g, Rectangle panelRectangle) 
         {
             int size = schedulingDM.ClusterDefScheds.Count;
+
+            /* The following two variables represent unadjusted day indices.
+             * That is, Mon = 0, Tues = 1, Wed = 2, Thu = 3, Fri = 4, Sat = 5.
+             * */
+            int dayIndex;
+            int startOfTheWeekDayIndex = GetDayIndex(startOfTheWeek.DayOfWeek);
+
+            /* Represents the adjusted index depending on the starting day in the calendar. 
+             * Example, Monday, which is supposed to be 0, becomes 1 if the day starts with Saturday(which is the 0 in this case)),
+             * because Monday becomes the second day in the calendar.
+            * */
+            int adjustedDayIndex; 
+
             DefenseSchedule curr;
             for (int i = 0; i < size; i++)
             {
                 curr = schedulingDM.ClusterDefScheds[i];
-                DrawTimePeriod(g, Color.Red, panelRectangle, ((int)curr.StartTime.DayOfWeek) - 1, curr );
+
+                dayIndex = GetDayIndex(curr.StartTime.DayOfWeek);
+                adjustedDayIndex = (dayIndex+(Constants.DAYS_IN_DEF_WEEK - startOfTheWeekDayIndex))%Constants.DAYS_IN_DEF_WEEK;
+
+                DrawTimePeriod(g, Color.Red, panelRectangle, adjustedDayIndex, curr );
             }
         }
+
+        private int GetDayIndex(DayOfWeek day) 
+        {
+            return (int)day - 1;
+        }
+
 
         private void DrawFreeTimes(Graphics g, Rectangle panelRectangle) 
         {
@@ -102,6 +125,7 @@ namespace CustomUserControl
             double schedHeight = panelRectangle.Height * (timePeriod.EndTime.Subtract(timePeriod.StartTime).TotalMinutes / totalMinsInDay);
 
             int margin = 2;
+
             /* For Debugging Purposes
             Console.WriteLine(timePeriod.ToString());
             Console.WriteLine((leftX + dayIndex * dayWidth + margin)+", "+((int)(topY + yCoord))+", "+(dayWidth - margin * 2)+", "+(int)schedHeight);
@@ -111,7 +135,7 @@ namespace CustomUserControl
             Font font1 = new Font("Arial", 12, FontStyle.Bold, GraphicsUnit.Point);
             Rectangle rect = new Rectangle(leftX + dayIndex * dayWidth + margin, (int)(topY + yCoord), dayWidth - margin * 2, (int)schedHeight);
             g.FillRectangle(new SolidBrush(color), rect);
-            g.DrawString(timePeriod.ToString(),font1, new SolidBrush(Color.Black),  rect);
+            g.DrawString(timePeriod.ToString(),font1, new SolidBrush(Color.Black),  rect, new StringFormat());
         }
 
         /****** END: Drawing Methods*******/
@@ -131,6 +155,7 @@ namespace CustomUserControl
             }
 
             DateTime currDate = startOfTheWeek;
+            
             int i;
             for (i = 0; i < labelDates.Count; i++)
             {
@@ -144,12 +169,10 @@ namespace CustomUserControl
 
             endOfTheWeek = Convert.ToDateTime(labelDates[i - 1].Text);
 
-
-
             if (!currPanelistID.Equals(""))
                 schedulingDM.RefreshClusterDefSchedules(startOfTheWeek, endOfTheWeek, currPanelistID);
             if (!currGroupID.Equals(""))
-                schedulingDM.RefreshClusterDefSchedules(startOfTheWeek, endOfTheWeek, currGroupID);
+                schedulingDM.RefreshSelectedGroupFreeTimes(startOfTheWeek, endOfTheWeek, currGroupID);
             
             panelCalendar.Refresh();
         }
@@ -227,7 +250,6 @@ namespace CustomUserControl
         }
         
         /****** END: EVENT LISTENERS*******/
-
 
 
         /******* OTHER METHODS******/
