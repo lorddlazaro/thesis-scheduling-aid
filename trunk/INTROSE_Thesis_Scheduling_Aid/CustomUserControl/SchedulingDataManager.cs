@@ -150,6 +150,8 @@ namespace CustomUserControl
             query = "SELECT title from thesisGroup WHERE thesisGroupID = " + thesisGroupID + ";";
             groupTitle = dbHandler.Select(query, 1)[0].ElementAt(0);
 
+            Console.WriteLine(startTime+" to "+endTime+" is within "+startDate+"-"+endDate);
+
             return new DefenseSchedule(startTime, endTime, place, groupTitle);
         }
 
@@ -304,7 +306,7 @@ namespace CustomUserControl
                 else
                     query += ";";
             }
-      
+            Console.WriteLine(query);//debugging
             AddUniqueTimeSlots(eventIDs, dbHandler.Select(query, 1)[0]);
 
             /*End*/
@@ -406,7 +408,9 @@ namespace CustomUserControl
 
             DateTime earliestTime = new DateTime(2013, 1, 1, START_HOUR, START_MIN, 0);
             DateTime latestTime = new DateTime(2013, 1, 1, LIMIT_HOUR, LIMIT_MIN, 0);
-
+            /*For Debugging Purposes*/
+            Console.WriteLine("EventIDs size:"+size);
+            /*For Debugging Purposes*/
             for (int i = 0; i < size; i++)
             {
                 query = "SELECT eventStart, eventEnd FROM Event WHERE eventID = " + eventIDs.ElementAt(i) + ";";
@@ -456,12 +460,12 @@ namespace CustomUserControl
                 }
             }
 
-            /*For debugging purposes
+            /*For debugging purposes*/
             Console.WriteLine("Event busy slots:");
             for (int i = 0; i < DEFWEEK_DAYS; i++) 
             {
                 Console.WriteLine("Day:" + i);
-                Helper.PrintTimePeriods(busySlots[i]);
+                DateTimeHelper.PrintTimePeriods(busySlots[i]);
             }
             Console.WriteLine();
             /*For debugging purposes*/
