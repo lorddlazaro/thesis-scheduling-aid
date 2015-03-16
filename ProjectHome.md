@@ -1,0 +1,1 @@
+This software aims to help the ST Thesis Coordinator of the  College of Computer Studies of De La Salle University in scheduling defenses for all thesis groups taking THSST-1 THSST-3.sdadsf
